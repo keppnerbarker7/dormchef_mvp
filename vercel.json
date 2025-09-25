@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "buildCommand": "cd dormchef && npm run build",
+  "installCommand": "cd dormchef && npm install",
+  "outputDirectory": "dormchef/.next",
+  "framework": "nextjs"
+}
