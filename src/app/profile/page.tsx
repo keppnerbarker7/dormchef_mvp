@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -26,7 +26,7 @@ const DIETARY_OPTIONS = [
 ];
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
 
   const [formData, setFormData] = useState<ProfileFormData>({
@@ -44,16 +44,16 @@ export default function ProfilePage() {
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
+    if (isLoaded && !user) {
+      router.push('/sign-in');
     }
-  }, [status, router]);
+  }, [isLoaded, user, router]);
 
   useEffect(() => {
-    if (session?.user) {
+    if (user) {
       fetchProfile();
     }
-  }, [session]);
+  }, [user]);
 
   const fetchProfile = async () => {
     try {
@@ -148,7 +148,7 @@ export default function ProfilePage() {
     }
   };
 
-  if (status === 'loading' || isLoading) {
+  if (!isLoaded || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (!session) {
+  if (!user) {
     return null;
   }
 
@@ -172,7 +172,7 @@ export default function ProfilePage() {
               </Link>
               <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
             </div>
-            <span className="text-sm text-gray-500">{session.user.email}</span>
+            <span className="text-sm text-gray-500">{user.emailAddresses[0]?.emailAddress}</span>
           </div>
         </div>
       </header>

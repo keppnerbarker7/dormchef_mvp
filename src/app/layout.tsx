@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
-import { SessionProvider } from "@/components/layout/SessionProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,9 +30,7 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} font-sans antialiased`}
       >
         <ClerkProvider>
-          <SessionProvider>
-            {children}
-          </SessionProvider>
+          {children}
         </ClerkProvider>
       </body>
     </html>

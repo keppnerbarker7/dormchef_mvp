@@ -1,28 +1,19 @@
-import { withAuth } from 'next-auth/middleware';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export default withAuth(
-  function middleware(req) {
-    // Add any additional middleware logic here
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        // Check if user is authenticated for protected routes
-        if (req.nextUrl.pathname.startsWith('/dashboard')) {
-          return !!token;
-        }
-        if (req.nextUrl.pathname.startsWith('/api/') && !req.nextUrl.pathname.startsWith('/api/auth/')) {
-          return !!token;
-        }
-        return true;
-      },
-    },
-  }
-);
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/profile(.*)',
+  '/recipes(.*)',
+  '/meal-planner(.*)',
+  '/shopping-list(.*)',
+  '/friends(.*)',
+  '/api/((?!auth|webhooks).*)' // Protect API routes except auth and webhooks
+])
+
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) auth().protect()
+})
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/api/:path*',
-  ]
-};
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+}
