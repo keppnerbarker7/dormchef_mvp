@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  name                 String?
+  email                String    @unique
+  emailVerified        DateTime?
+  image                String?
+  username             String?   @unique
+  displayName          String?
+  school               String?
+  dietaryRestrictions  String[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Relations
+  accounts             Account[]
+  sessions             Session[]
+  recipes              Recipe[]
+  mealPlans            MealPlan[]
+  shoppingLists        ShoppingList[]
+  sentFriendRequests   Friendship[] @relation("FriendshipRequester")
+  receivedFriendRequests Friendship[] @relation("FriendshipAddressee")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Recipe {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  imageUrl     String?
+  ingredients  Json     // Array of Ingredient objects
+  instructions String[] // Array of instruction strings
+  prepTime     Int      // minutes
+  cookTime     Int      // minutes
+  servings     Int
+  difficulty   String   // 'Easy' | 'Medium' | 'Hard'
+  tags         String[]
+  isPublic     Boolean  @default(true)
+  authorId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  author       User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  plannedMeals PlannedMeal[]
+
+  @@index([authorId])
+  @@index([isPublic])
+}
+
+model MealPlan {
+  id            String   @id @default(cuid())
+  userId        String
+  weekStartDate DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meals         PlannedMeal[]
+
+  @@unique([userId, weekStartDate])
+  @@index([userId])
+}
+
+model PlannedMeal {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  day        Int      // 0-6 (Sunday-Saturday)
+  mealType   String   // 'breakfast' | 'lunch' | 'dinner'
+  recipeId   String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([mealPlanId, day, mealType])
+  @@index([mealPlanId])
+}
+
+model Friendship {
+  id          String   @id @default(cuid())
+  requesterId String
+  addresseeId String
+  status      String   // 'pending' | 'accepted' | 'declined'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  requester   User @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee   User @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@index([requesterId])
+  @@index([addresseeId])
+}
+
+model ShoppingList {
+  id            String   @id @default(cuid())
+  userId        String
+  weekStartDate DateTime
+  items         Json     // Array of ShoppingListItem objects
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStartDate])
+  @@index([userId])
+}
