@@ -157,6 +157,14 @@ export default function RecipesPage() {
           </div>
 
           <div className="flex items-center gap-4 mt-4 md:mt-0">
+            {/* Add Recipe Button */}
+            <Link
+              href="/recipes/add"
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
+            >
+              <span>+</span>
+              Add Recipe
+            </Link>
             {/* View Mode Toggle */}
             <div className="flex bg-gray-800 rounded-lg p-1">
               <button
