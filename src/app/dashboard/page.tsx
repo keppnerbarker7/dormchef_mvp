@@ -155,7 +155,7 @@ export default function DashboardPage() {
               New to DormChef? Start with adding your first recipe!
             </p>
             <Link
-              href="/recipes/new"
+              href="/recipes/add"
               className="w-full inline-block text-center px-4 py-2 bg-indigo-600 text-white rounded-md
                        hover:bg-indigo-700 focus:outline-none focus:ring-2
                        focus:ring-offset-2 focus:ring-indigo-500"

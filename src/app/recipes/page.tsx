@@ -267,7 +267,7 @@ export default function RecipesPage() {
               Try adjusting your search criteria or create a new recipe!
             </p>
             <Link
-              href="/recipes/new"
+              href="/recipes/add"
               className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
             >
               Create Your First Recipe
