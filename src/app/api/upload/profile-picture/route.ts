@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -13,9 +12,9 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -66,7 +65,7 @@ export async function POST(request: NextRequest) {
         {
           resource_type: 'image',
           folder: 'dormchef/profile-pictures',
-          public_id: `user-${session.user.id}`,
+          public_id: `user-${userId}`,
           overwrite: true,
           transformation: [
             { width: 400, height: 400, crop: 'fill', gravity: 'face' },
@@ -84,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     // Update user's profile picture in database
     const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: userId },
       data: { image: result.secure_url },
       select: {
         id: true,

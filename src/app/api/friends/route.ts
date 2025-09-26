@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -28,15 +27,15 @@ export async function GET(request: NextRequest) {
     let whereClause: any = {};
 
     if (type === 'sent') {
-      whereClause.requesterId = session.user.id;
+      whereClause.requesterId = userId;
     } else if (type === 'received') {
-      whereClause.addresseeId = session.user.id;
+      whereClause.addresseeId = userId;
     } else {
       // Get all friendships where user is either requester or addressee
       whereClause = {
         OR: [
-          { requesterId: session.user.id },
-          { addresseeId: session.user.id }
+          { requesterId: userId },
+          { addresseeId: userId }
         ]
       };
     }
@@ -72,7 +71,7 @@ export async function GET(request: NextRequest) {
 
     // Transform data to be more user-friendly
     const transformedFriendships = friendships.map(friendship => {
-      const isRequester = friendship.requesterId === session.user.id;
+      const isRequester = friendship.requesterId === userId;
       const friend = isRequester ? friendship.addressee : friendship.requester;
 
       return {
@@ -100,9 +99,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -118,7 +117,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (addresseeId === session.user.id) {
+    if (addresseeId === userId) {
       return NextResponse.json(
         { error: 'Cannot send friend request to yourself' },
         { status: 400 }
@@ -143,12 +142,12 @@ export async function POST(request: NextRequest) {
       where: {
         OR: [
           {
-            requesterId: session.user.id,
+            requesterId: userId,
             addresseeId: addresseeId,
           },
           {
             requesterId: addresseeId,
-            addresseeId: session.user.id,
+            addresseeId: userId,
           },
         ],
       },
@@ -176,7 +175,7 @@ export async function POST(request: NextRequest) {
     // Create friend request
     const friendship = await prisma.friendship.create({
       data: {
-        requesterId: session.user.id,
+        requesterId: userId,
         addresseeId: addresseeId,
         status: 'pending',
       },

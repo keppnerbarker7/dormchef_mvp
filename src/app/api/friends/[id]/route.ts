@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
@@ -8,7 +7,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
     const { id } = await params;
 
     if (!session?.user?.id) {
@@ -58,7 +57,7 @@ export async function PATCH(
     }
 
     // Check if user is the addressee (only addressee can accept/decline)
-    if (friendship.addresseeId !== session.user.id) {
+    if (friendship.addresseeId !== userId) {
       return NextResponse.json(
         { error: 'Only the addressee can respond to friend requests' },
         { status: 403 }
@@ -114,7 +113,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
     const { id } = await params;
 
     if (!session?.user?.id) {
@@ -137,7 +136,7 @@ export async function DELETE(
     }
 
     // Check if user is part of this friendship
-    if (friendship.requesterId !== session.user.id && friendship.addresseeId !== session.user.id) {
+    if (friendship.requesterId !== userId && friendship.addresseeId !== userId) {
       return NextResponse.json(
         { error: 'Not authorized to delete this friendship' },
         { status: 403 }
