@@ -131,68 +131,88 @@ export default function RecipesPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Navigation Header */}
-      <div className="bg-gray-800 border-b border-gray-700">
+      <div className="bg-black border-b border-gray-800 shadow-2xl">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              className="flex items-center gap-3 text-gray-300 hover:text-accent-orange transition-colors font-medium"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-              Back to Dashboard
+              <div className="w-8 h-8 rounded-lg bg-accent-orange/20 flex items-center justify-center">
+                <svg className="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
+              </div>
+              COMMAND CENTER
             </Link>
-            <h2 className="text-xl font-semibold">DormChef</h2>
+            <h2 className="text-2xl font-bold text-accent-orange font-display tracking-tight">FUEL ARSENAL</h2>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Recipe Collection</h1>
-            <p className="text-gray-400">Discover and save your favorite recipes</p>
+        <div className="hero-command-center rounded-2xl p-8 mb-8 relative">
+          <div className="relative z-10">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className="text-5xl font-bold mb-4 font-display tracking-tight text-gray-100">
+                  POWER
+                  <span className="text-accent-orange block">RECIPES</span>
+                </h1>
+                <p className="text-xl text-gray-300 font-medium">
+                  Your arsenal of high-performance nutrition.
+                  <span className="text-accent-orange font-bold"> Fuel your gains.</span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4 mt-6 md:mt-0">
+                {/* Add Recipe Button */}
+                <Link
+                  href="/recipes/add"
+                  className="px-6 py-3 gradient-orange text-white rounded-xl font-bold uppercase tracking-wide
+                           hover:scale-105 transition-all duration-200 flex items-center gap-2 shadow-lg"
+                >
+                  <span className="text-xl">⚡</span>
+                  ADD POWER RECIPE
+                </Link>
+                {/* View Mode Toggle */}
+                <div className="flex stats-hud rounded-xl p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`px-4 py-3 rounded-lg transition-all duration-200 ${
+                      viewMode === 'grid'
+                        ? 'bg-accent-orange text-white shadow-lg'
+                        : 'text-gray-400 hover:text-accent-orange hover:bg-accent-orange/10'
+                    }`}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm6 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V4zM3 12a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4zm6 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`px-4 py-3 rounded-lg transition-all duration-200 ${
+                      viewMode === 'list'
+                        ? 'bg-accent-orange text-white shadow-lg'
+                        : 'text-gray-400 hover:text-accent-orange hover:bg-accent-orange/10'
+                    }`}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
-            {/* Add Recipe Button */}
-            <Link
-              href="/recipes/add"
-              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
-            >
-              <span>+</span>
-              Add Recipe
-            </Link>
-            {/* View Mode Toggle */}
-            <div className="flex bg-gray-800 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  viewMode === 'grid'
-                    ? 'bg-orange-600 text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm6 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V4zM3 12a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4zm6 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  viewMode === 'list'
-                    ? 'bg-orange-600 text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                </svg>
-              </button>
+          {/* Recipe Count HUD */}
+          <div className="absolute top-6 right-6 stats-hud rounded-xl p-4 hidden lg:block">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-accent-orange mb-1">{recipes.length}</div>
+              <div className="text-xs text-gray-400 uppercase tracking-wide">Power Recipes</div>
             </div>
-
           </div>
         </div>
 
@@ -204,22 +224,43 @@ export default function RecipesPage() {
         />
 
         {/* Results Info */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-400">
-            {loading ? 'Loading...' : `${recipes.length} recipes found`}
-          </p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="stats-hud rounded-xl px-6 py-3">
+            <p className="text-gray-300 font-medium">
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-accent-orange rounded-full animate-pulse"></div>
+                  Scanning arsenal...
+                </span>
+              ) : (
+                <span>
+                  <span className="text-accent-orange font-bold">{recipes.length}</span> power recipes ready
+                </span>
+              )}
+            </p>
+          </div>
 
           {totalPages > 1 && (
-            <div className="text-sm text-gray-400">
-              Page {currentPage} of {totalPages}
+            <div className="stats-hud rounded-xl px-4 py-2">
+              <div className="text-sm text-gray-300 font-medium">
+                Page <span className="text-accent-orange font-bold">{currentPage}</span> of <span className="text-accent-green font-bold">{totalPages}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-900/20 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
-            {error}
+          <div className="stats-hud border border-accent-red rounded-xl p-6 mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-accent-red/20 rounded-xl flex items-center justify-center">
+                <span className="text-accent-red text-xl">⚠️</span>
+              </div>
+              <div>
+                <h3 className="text-accent-red font-bold mb-1">SYSTEM ERROR</h3>
+                <p className="text-gray-300">{error}</p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -227,8 +268,8 @@ export default function RecipesPage() {
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-gray-800 rounded-lg p-4 animate-pulse">
-                <div className="bg-gray-700 h-48 rounded-lg mb-4"></div>
+              <div key={i} className="nav-card rounded-xl p-6 animate-pulse">
+                <div className="bg-gray-700 h-48 rounded-xl mb-4"></div>
                 <div className="bg-gray-700 h-4 rounded mb-2"></div>
                 <div className="bg-gray-700 h-3 rounded w-3/4 mb-4"></div>
                 <div className="flex justify-between">
@@ -260,28 +301,36 @@ export default function RecipesPage() {
 
         {/* Empty State */}
         {!loading && recipes.length === 0 && !error && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🍳</div>
-            <h3 className="text-xl font-semibold mb-2">No recipes found</h3>
-            <p className="text-gray-400 mb-6">
-              Try adjusting your search criteria or create a new recipe!
-            </p>
-            <Link
-              href="/recipes/add"
-              className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
-            >
-              Create Your First Recipe
-            </Link>
+          <div className="hero-command-center rounded-2xl p-12 text-center relative">
+            <div className="relative z-10">
+              <div className="text-8xl mb-6">💪</div>
+              <h3 className="text-3xl font-bold text-gray-100 mb-4 font-display tracking-tight">
+                ARSENAL EMPTY
+              </h3>
+              <p className="text-xl text-gray-300 mb-8 font-medium">
+                Time to build your <span className="text-accent-orange font-bold">power recipe collection</span>.
+                <span className="block mt-2">Your gains are waiting.</span>
+              </p>
+              <Link
+                href="/recipes/add"
+                className="gradient-orange text-white px-8 py-4 rounded-xl text-lg font-bold
+                         hover:scale-105 transition-all duration-200 uppercase tracking-wide shadow-2xl inline-flex items-center gap-3"
+              >
+                <span className="text-2xl">⚡</span>
+                CREATE FIRST POWER RECIPE
+              </Link>
+            </div>
           </div>
         )}
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2">
+          <div className="flex justify-center items-center gap-3">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-3 py-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-3 rounded-xl stats-hud text-gray-300 hover:text-accent-orange hover:bg-accent-orange/10
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
             >
               Previous
             </button>
@@ -299,10 +348,10 @@ export default function RecipesPage() {
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={`px-3 py-2 rounded-lg transition-colors ${
+                  className={`px-4 py-3 rounded-xl transition-all duration-200 font-bold ${
                     page === currentPage
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                      ? 'gradient-orange text-white shadow-lg transform scale-105'
+                      : 'stats-hud text-gray-300 hover:text-accent-orange hover:bg-accent-orange/10'
                   }`}
                 >
                   {page}
@@ -313,7 +362,8 @@ export default function RecipesPage() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-3 py-2 rounded-lg bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-3 rounded-xl stats-hud text-gray-300 hover:text-accent-orange hover:bg-accent-orange/10
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
             >
               Next
             </button>

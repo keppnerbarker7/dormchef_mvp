@@ -25,11 +25,11 @@ interface RecipeFormData {
   imageUrl: string;
 }
 
-const COMMON_TAGS = [
-  'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert',
-  'Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free',
-  'Quick', 'Healthy', 'Comfort Food', 'One-Pot',
-  'Budget-Friendly', 'High-Protein', 'Low-Carb'
+const POWER_TAGS = [
+  'Pre-Workout', 'Post-Workout', 'Breakfast', 'Lunch', 'Dinner', 'Snack',
+  'High-Protein', 'Mass Gainer', 'Cutting', 'Bulking', 'Low-Carb', 'Keto',
+  'Quick Fuel', 'Meal Prep', 'One-Pot', 'Budget Beast', 'Vegan Power',
+  'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Recovery Fuel', 'Energy Boost'
 ];
 
 const UNITS = [
@@ -184,97 +184,134 @@ export default function AddRecipePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-black shadow-2xl border-b border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Link href="/recipes" className="text-blue-600 hover:text-blue-800">
-                ← Back to Recipes
+            <div className="flex items-center space-x-6">
+              <Link
+                href="/recipes"
+                className="flex items-center gap-3 text-gray-300 hover:text-accent-orange transition-colors font-medium"
+              >
+                <div className="w-8 h-8 rounded-lg bg-accent-orange/20 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                BACK TO ARSENAL
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">Add New Recipe</h1>
             </div>
+            <h1 className="text-3xl font-bold text-accent-orange font-display tracking-tight">
+              CREATE POWER RECIPE
+            </h1>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Messages */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-              {error}
+            <div className="stats-hud border border-accent-red rounded-xl p-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-accent-red/20 rounded-xl flex items-center justify-center">
+                  <span className="text-accent-red text-xl">⚠️</span>
+                </div>
+                <div>
+                  <h3 className="text-accent-red font-bold mb-1">SYSTEM ERROR</h3>
+                  <p className="text-gray-300">{error}</p>
+                </div>
+              </div>
             </div>
           )}
 
           {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
-              {success}
+            <div className="stats-hud border border-accent-green rounded-xl p-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-accent-green/20 rounded-xl flex items-center justify-center">
+                  <span className="text-accent-green text-xl">✅</span>
+                </div>
+                <div>
+                  <h3 className="text-accent-green font-bold mb-1">RECIPE DEPLOYED</h3>
+                  <p className="text-gray-300">{success}</p>
+                </div>
+              </div>
             </div>
           )}
 
           {/* Basic Information */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h2>
+          <div className="hero-command-center rounded-2xl p-8">
+            <div className="relative z-10">
+              <h2 className="text-3xl font-bold text-gray-100 mb-6 font-display tracking-tight flex items-center gap-3">
+                <span className="text-accent-orange">💪</span>
+                RECIPE INTEL
+              </h2>
 
-            <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                  Recipe Title *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter recipe title"
-                />
-              </div>
+              <div className="grid grid-cols-1 gap-8">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+                    Power Recipe Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                    className="block w-full px-6 py-4 bg-black/40 border border-gray-700 rounded-xl text-white
+                             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-orange
+                             focus:border-accent-orange font-medium text-lg"
+                    placeholder="e.g. Beast Mode Protein Bowl"
+                  />
+                </div>
 
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  rows={3}
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Describe your recipe..."
-                />
-              </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+                    Recipe Description
+                  </label>
+                  <textarea
+                    id="description"
+                    rows={4}
+                    value={formData.description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    className="block w-full px-6 py-4 bg-black/40 border border-gray-700 rounded-xl text-white
+                             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-orange
+                             focus:border-accent-orange font-medium resize-none"
+                    placeholder="Describe your power recipe - what makes it special for athletes?"
+                  />
+                </div>
 
-              <div>
-                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700">
-                  Image URL (optional)
-                </label>
-                <input
-                  type="url"
-                  id="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="https://example.com/image.jpg"
-                />
+                <div>
+                  <label htmlFor="imageUrl" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+                    Recipe Image URL (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    id="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
+                    className="block w-full px-6 py-4 bg-black/40 border border-gray-700 rounded-xl text-white
+                             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-orange
+                             focus:border-accent-orange font-medium"
+                    placeholder="https://example.com/beast-recipe.jpg"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* Recipe Details */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Recipe Details</h2>
+          <div className="stats-hud rounded-xl p-8">
+            <h2 className="text-3xl font-bold text-gray-100 mb-6 font-display tracking-tight flex items-center gap-3">
+              <span className="text-accent-green">⚡</span>
+              PERFORMANCE SPECS
+            </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
-                <label htmlFor="prepTime" className="block text-sm font-medium text-gray-700">
-                  Prep Time (minutes)
+                <label htmlFor="prepTime" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+                  Prep Time (min)
                 </label>
                 <input
                   type="number"
@@ -282,14 +319,14 @@ export default function AddRecipePage() {
                   min="0"
                   value={formData.prepTime}
                   onChange={(e) => setFormData(prev => ({ ...prev, prepTime: parseInt(e.target.value) || 0 }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-xl text-white
+                           focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange font-medium"
                 />
               </div>
 
               <div>
-                <label htmlFor="cookTime" className="block text-sm font-medium text-gray-700">
-                  Cook Time (minutes)
+                <label htmlFor="cookTime" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+                  Cook Time (min)
                 </label>
                 <input
                   type="number"
@@ -297,13 +334,13 @@ export default function AddRecipePage() {
                   min="0"
                   value={formData.cookTime}
                   onChange={(e) => setFormData(prev => ({ ...prev, cookTime: parseInt(e.target.value) || 0 }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-xl text-white
+                           focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange font-medium"
                 />
               </div>
 
               <div>
-                <label htmlFor="servings" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="servings" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
                   Servings
                 </label>
                 <input
@@ -312,25 +349,25 @@ export default function AddRecipePage() {
                   min="1"
                   value={formData.servings}
                   onChange={(e) => setFormData(prev => ({ ...prev, servings: parseInt(e.target.value) || 1 }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-xl text-white
+                           focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange font-medium"
                 />
               </div>
 
               <div>
-                <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700">
-                  Difficulty
+                <label htmlFor="difficulty" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+                  Intensity Level
                 </label>
                 <select
                   id="difficulty"
                   value={formData.difficulty}
                   onChange={(e) => setFormData(prev => ({ ...prev, difficulty: e.target.value as 'Easy' | 'Medium' | 'Hard' }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-xl text-white
+                           focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange font-medium"
                 >
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
+                  <option value="Easy">Beginner</option>
+                  <option value="Medium">Intermediate</option>
+                  <option value="Hard">Advanced</option>
                 </select>
               </div>
             </div>
@@ -453,19 +490,21 @@ export default function AddRecipePage() {
             </div>
           </div>
 
-          {/* Tags */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Tags</h2>
-            <div className="flex flex-wrap gap-2">
-              {COMMON_TAGS.map(tag => (
+          {/* FUEL CATEGORIES */}
+          <div className="stats-hud rounded-xl p-6">
+            <h2 className="text-2xl font-bold text-gray-100 mb-6 font-display tracking-tight uppercase">
+              FUEL CATEGORIES
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {POWER_TAGS.map(tag => (
                 <button
                   key={tag}
                   type="button"
                   onClick={() => toggleTag(tag)}
-                  className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+                  className={`px-4 py-2 text-sm rounded-xl border-2 transition-all duration-200 font-medium uppercase tracking-wide ${
                     formData.tags.includes(tag)
-                      ? 'bg-blue-100 border-blue-300 text-blue-800'
-                      : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-accent-orange text-white border-accent-orange shadow-lg transform scale-105'
+                      : 'bg-black/40 border-gray-700 text-gray-300 hover:border-accent-orange hover:text-accent-orange hover:bg-accent-orange/10'
                   }`}
                 >
                   {tag}
@@ -474,31 +513,50 @@ export default function AddRecipePage() {
             </div>
           </div>
 
-          {/* Privacy & Submit */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.isPublic}
-                    onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">
-                    Make this recipe public (others can see and use it)
-                  </span>
+          {/* DEPLOY RECIPE */}
+          <div className="stats-hud rounded-xl p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div className="flex items-center">
+                <label className="flex items-center group cursor-pointer">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={formData.isPublic}
+                      onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
+                      className="sr-only"
+                    />
+                    <div className={`w-6 h-6 rounded-lg border-2 transition-all duration-200 ${
+                      formData.isPublic
+                        ? 'bg-accent-orange border-accent-orange'
+                        : 'border-gray-600 bg-black/40'
+                    }`}>
+                      {formData.isPublic && (
+                        <svg className="w-4 h-4 text-white m-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <span className="text-lg font-bold text-gray-100 font-display uppercase tracking-wide">
+                      SHARE WITH SQUAD
+                    </span>
+                    <p className="text-sm text-gray-400 font-medium">
+                      Make this power recipe available to other champions
+                    </p>
+                  </div>
                 </label>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700
-                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                         disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-4 gradient-orange text-white rounded-xl font-bold text-lg uppercase tracking-wide
+                         hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+                         disabled:hover:scale-100 shadow-lg flex items-center gap-3"
               >
-                {isSubmitting ? 'Creating Recipe...' : 'Create Recipe'}
+                <span className="text-2xl">⚡</span>
+                {isSubmitting ? 'DEPLOYING RECIPE...' : 'DEPLOY POWER RECIPE'}
               </button>
             </div>
           </div>

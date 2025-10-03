@@ -51,64 +51,68 @@ export default function SearchFilters({ filters, onFilterChange, loading }: Sear
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 mb-6">
+    <div className="stats-hud rounded-xl p-6 mb-8">
       {/* Main Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex-1">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search recipes, ingredients, or authors..."
+              placeholder="Search power recipes, ingredients, or champions..."
               value={filters.search}
               onChange={handleSearchChange}
               disabled={loading}
-              className="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
+              className="w-full bg-black/40 text-white placeholder-gray-400 rounded-xl px-6 py-4 pl-12
+                       border border-gray-700 focus:outline-none focus:ring-2 focus:ring-accent-orange
+                       focus:border-accent-orange disabled:opacity-50 font-medium"
             />
-            <svg
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-            </svg>
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-lg bg-accent-orange/20 flex items-center justify-center">
+              <svg className="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              </svg>
+            </div>
           </div>
         </div>
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="md:hidden bg-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
+          className="md:hidden bg-black/40 text-white px-6 py-4 rounded-xl hover:bg-accent-orange/20
+                   hover:border-accent-orange border border-gray-700 transition-all duration-200
+                   flex items-center gap-3 font-bold uppercase tracking-wide"
         >
-          <svg className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
+          <svg className={`w-5 h-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
-          Filters
+          FILTERS
         </button>
       </div>
 
       {/* Advanced Filters */}
-      <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 ${isExpanded ? 'block' : 'hidden md:grid'}`}>
+      <div className={`grid grid-cols-1 md:grid-cols-4 gap-6 ${isExpanded ? 'block' : 'hidden md:grid'}`}>
         {/* Difficulty Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Difficulty
+          <label className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+            Intensity Level
           </label>
           <select
             value={filters.difficulty}
             onChange={handleDifficultyChange}
             disabled={loading}
-            className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
+            className="w-full bg-black/40 text-white rounded-xl px-4 py-3 border border-gray-700
+                     focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange
+                     disabled:opacity-50 font-medium"
           >
             <option value="">All Levels</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option value="Easy">Beginner</option>
+            <option value="Medium">Intermediate</option>
+            <option value="Hard">Advanced</option>
           </select>
         </div>
 
         {/* Prep Time Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Max Prep Time: {filters.maxPrepTime}min
+          <label className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+            Max Prep Time: <span className="text-accent-orange">{filters.maxPrepTime}min</span>
           </label>
           <input
             type="range"
@@ -118,9 +122,12 @@ export default function SearchFilters({ filters, onFilterChange, loading }: Sear
             value={filters.maxPrepTime}
             onChange={handlePrepTimeChange}
             disabled={loading}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+            className="w-full h-3 bg-black/40 rounded-xl appearance-none cursor-pointer"
+            style={{
+              background: `linear-gradient(to right, var(--accent-orange) 0%, var(--accent-orange) ${(filters.maxPrepTime - 5) / 115 * 100}%, rgba(0,0,0,0.4) ${(filters.maxPrepTime - 5) / 115 * 100}%, rgba(0,0,0,0.4) 100%)`
+            }}
           />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <div className="flex justify-between text-xs text-gray-400 mt-2 font-medium">
             <span>5min</span>
             <span>120min</span>
           </div>
@@ -128,18 +135,20 @@ export default function SearchFilters({ filters, onFilterChange, loading }: Sear
 
         {/* Visibility Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Visibility
+          <label className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
+            Recipe Source
           </label>
           <select
             value={filters.isPublic === null ? 'all' : filters.isPublic ? 'public' : 'private'}
             onChange={handleVisibilityChange}
             disabled={loading}
-            className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
+            className="w-full bg-black/40 text-white rounded-xl px-4 py-3 border border-gray-700
+                     focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange
+                     disabled:opacity-50 font-medium"
           >
-            <option value="all">All Recipes</option>
-            <option value="public">Public Only</option>
-            <option value="private">My Private</option>
+            <option value="all">All Arsenal</option>
+            <option value="public">Squad Shared</option>
+            <option value="private">Personal Only</option>
           </select>
         </div>
 
@@ -148,9 +157,11 @@ export default function SearchFilters({ filters, onFilterChange, loading }: Sear
           <button
             onClick={clearFilters}
             disabled={loading}
-            className="w-full bg-gray-700 text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-600 hover:text-white transition-colors disabled:opacity-50"
+            className="w-full bg-black/40 text-gray-300 px-4 py-3 rounded-xl border border-gray-700
+                     hover:bg-accent-red/20 hover:border-accent-red hover:text-accent-red
+                     transition-all duration-200 disabled:opacity-50 font-bold uppercase tracking-wide"
           >
-            Clear Filters
+            RESET FILTERS
           </button>
         </div>
       </div>
