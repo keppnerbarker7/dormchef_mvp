@@ -17,8 +17,8 @@ export default function DashboardPage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-lg text-gray-300">Loading...</div>
       </div>
     );
   }
@@ -28,29 +28,31 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gray-900">
+      <header className="bg-black shadow-2xl border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-bold text-gray-900">DormChef</h1>
+            <h1 className="text-3xl font-bold text-accent-orange font-display tracking-tight">
+              DORMCHEF
+            </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700">
-                Welcome, {user.firstName || user.emailAddresses[0]?.emailAddress}
+              <span className="text-gray-300 font-medium">
+                What's up, {user.firstName || user.emailAddresses[0]?.emailAddress}
               </span>
               <Link
                 href="/profile"
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100
-                         rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2
-                         focus:ring-offset-2 focus:ring-gray-500"
+                className="px-4 py-2 text-sm font-bold text-gray-200 bg-gray-800 border border-gray-700
+                         rounded hover:bg-gray-700 hover:border-accent-orange transition-all duration-200
+                         focus:outline-none focus:ring-2 focus:ring-accent-orange"
               >
-                Profile
+                PROFILE
               </Link>
               <UserButton
                 appearance={{
                   elements: {
-                    avatarBox: 'w-8 h-8',
-                    userButtonPopoverCard: 'bg-white shadow-lg border border-gray-200',
-                    userButtonPopoverActionButton: 'text-gray-700 hover:bg-gray-100',
+                    avatarBox: 'w-10 h-10 border-2 border-accent-orange',
+                    userButtonPopoverCard: 'bg-gray-800 shadow-2xl border border-gray-700',
+                    userButtonPopoverActionButton: 'text-gray-300 hover:bg-gray-700 hover:text-accent-orange',
                   }
                 }}
                 afterSignOutUrl="/sign-in"
@@ -61,106 +63,189 @@ export default function DashboardPage() {
       </header>
 
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome to DormChef! 👨‍🍳
-          </h2>
-          <p className="text-lg text-gray-600">
-            Cook cheap. Cook healthy. Cook together.
-          </p>
-        </div>
+        {/* Immersive Hero Command Center */}
+        <div className="hero-command-center rounded-2xl p-8 mb-12 relative">
+          <div className="relative z-10">
+            <div className="mb-8">
+              <h2 className="text-5xl font-bold text-gray-100 mb-4 font-display tracking-tight">
+                FUEL YOUR GRIND.
+                <span className="text-accent-orange block">FEED YOUR GAINS.</span>
+              </h2>
+              <p className="text-xl text-gray-300 font-medium">
+                Command center for peak nutrition performance.
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">My Recipes</h3>
-            <p className="text-gray-600 mb-4">
-              Create and organize your personal recipe collection
-            </p>
-            <Link
-              href="/recipes"
-              className="w-full inline-block text-center px-4 py-2 bg-blue-600 text-white rounded-md
-                       hover:bg-blue-700 focus:outline-none focus:ring-2
-                       focus:ring-offset-2 focus:ring-blue-500"
-            >
-              View Recipes
-            </Link>
-          </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Stats HUD */}
+              <div className="stats-hud rounded-xl p-6 pulse-orange">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-gray-100 font-display">PERFORMANCE METRICS</h3>
+                  <div className="w-3 h-3 bg-accent-orange rounded-full animate-pulse"></div>
+                </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Meal Planner</h3>
-            <p className="text-gray-600 mb-4">
-              Plan your weekly meals with drag and drop
-            </p>
-            <Link
-              href="/meal-planner"
-              className="w-full inline-block text-center px-4 py-2 bg-green-600 text-white rounded-md
-                       hover:bg-green-700 focus:outline-none focus:ring-2
-                       focus:ring-offset-2 focus:ring-green-500"
-            >
-              Plan Meals
-            </Link>
-          </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-gray-300 font-medium">Weekly Protein Goal</span>
+                      <span className="text-accent-orange font-bold">847g / 1050g</span>
+                    </div>
+                    <div className="progress-bar h-2 rounded-full" style={{"--progress": "80.7%"}}>
+                      <div className="absolute inset-0 bg-gradient-to-r from-accent-orange to-accent-red rounded-full"
+                           style={{width: "80.7%"}}></div>
+                    </div>
+                  </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Friends Feed</h3>
-            <p className="text-gray-600 mb-4">
-              See what your friends are cooking this week
-            </p>
-            <Link
-              href="/friends"
-              className="w-full inline-block text-center px-4 py-2 bg-orange-600 text-white rounded-md
-                       hover:bg-orange-700 focus:outline-none focus:ring-2
-                       focus:ring-offset-2 focus:ring-orange-500"
-            >
-              Explore Feed
-            </Link>
-          </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-gray-300 font-medium">Meal Prep Streak</span>
+                      <span className="text-accent-green font-bold">12 days</span>
+                    </div>
+                    <div className="progress-bar h-2 rounded-full">
+                      <div className="absolute inset-0 bg-gradient-to-r from-accent-green to-accent-steel rounded-full"
+                           style={{width: "85%"}}></div>
+                    </div>
+                  </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Shopping List</h3>
-            <p className="text-gray-600 mb-4">
-              Auto-generated list from your meal plan
-            </p>
-            <Link
-              href="/shopping-list"
-              className="w-full inline-block text-center px-4 py-2 bg-purple-600 text-white rounded-md
-                       hover:bg-purple-700 focus:outline-none focus:ring-2
-                       focus:ring-offset-2 focus:ring-purple-500"
-            >
-              View List
-            </Link>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Quick Stats</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Recipes:</span>
-                <span className="font-semibold">0</span>
+                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-700">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-accent-orange">23</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wide">Recipes</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-accent-green">7</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wide">Planned</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-accent-steel">5</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wide">Squad</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Meals planned:</span>
-                <span className="font-semibold">0</span>
+
+              {/* Next Meal Preview */}
+              <div className="meal-preview rounded-xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-gray-100 font-display">NEXT FUEL UP</h3>
+                  <div className="text-accent-green text-sm font-medium bg-accent-green/20 px-3 py-1 rounded-full">
+                    TODAY 6:30 PM
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 bg-gradient-to-br from-accent-orange/20 to-accent-red/20 rounded-xl flex items-center justify-center">
+                    <span className="text-3xl">🥩</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-gray-100 mb-1">Power Beef Bowl</h4>
+                    <p className="text-gray-400 text-sm mb-2">High-protein post-workout fuel</p>
+                    <div className="flex space-x-4 text-xs">
+                      <span className="text-accent-orange">45g protein</span>
+                      <span className="text-accent-green">650 calories</span>
+                      <span className="text-accent-steel">15 min prep</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-gray-700">
+                  <Link href="/meal-planner" className="text-accent-orange hover:text-accent-red transition-colors text-sm font-medium">
+                    View full meal plan →
+                  </Link>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Friends:</span>
-                <span className="font-semibold">0</span>
+
+              {/* Squad Feed */}
+              <div className="meal-preview rounded-xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-gray-100 font-display">SQUAD SPOTLIGHT</h3>
+                  <div className="text-accent-steel text-sm font-medium">@mike_lifts</div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 bg-gradient-to-br from-accent-green/20 to-accent-steel/20 rounded-xl flex items-center justify-center">
+                    <span className="text-3xl">🥗</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-gray-100 mb-1">Macro Salad Stack</h4>
+                    <p className="text-gray-400 text-sm mb-2">"Perfect cutting season fuel 💪"</p>
+                    <div className="flex space-x-4 text-xs">
+                      <span className="text-accent-orange">38g protein</span>
+                      <span className="text-accent-green">420 calories</span>
+                      <span className="text-red-400">❤️ 12</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-gray-700">
+                  <Link href="/friends" className="text-accent-steel hover:text-accent-green transition-colors text-sm font-medium">
+                    See what the squad is cooking →
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Get Started</h3>
-            <p className="text-gray-600 mb-4">
-              New to DormChef? Start with adding your first recipe!
-            </p>
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="nav-card p-6 rounded-lg">
+            <div className="flex items-center mb-3">
+              <div className="w-2 h-6 gradient-orange rounded-full mr-3"></div>
+              <h3 className="text-lg font-bold text-gray-100 font-display">FUEL STATION</h3>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Browse recipes</p>
+            <Link
+              href="/recipes"
+              className="w-full inline-block text-center px-4 py-2 gradient-orange text-white font-bold text-sm
+                       rounded hover:scale-105 transition-all duration-200 uppercase tracking-wide"
+            >
+              Browse
+            </Link>
+          </div>
+
+          <div className="nav-card p-6 rounded-lg">
+            <div className="flex items-center mb-3">
+              <div className="w-2 h-6 gradient-green rounded-full mr-3"></div>
+              <h3 className="text-lg font-bold text-gray-100 font-display">MEAL PREP</h3>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Plan strategy</p>
+            <Link
+              href="/meal-planner"
+              className="w-full inline-block text-center px-4 py-2 gradient-green text-white font-bold text-sm
+                       rounded hover:scale-105 transition-all duration-200 uppercase tracking-wide"
+            >
+              Plan
+            </Link>
+          </div>
+
+          <div className="nav-card p-6 rounded-lg">
+            <div className="flex items-center mb-3">
+              <div className="w-2 h-6 gradient-red rounded-full mr-3"></div>
+              <h3 className="text-lg font-bold text-gray-100 font-display">SUPPLY RUN</h3>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Shopping list</p>
+            <Link
+              href="/shopping-list"
+              className="w-full inline-block text-center px-4 py-2 gradient-red text-white font-bold text-sm
+                       rounded hover:scale-105 transition-all duration-200 uppercase tracking-wide"
+            >
+              Shop
+            </Link>
+          </div>
+
+          <div className="nav-card p-6 rounded-lg">
+            <div className="flex items-center mb-3">
+              <div className="w-2 h-6 bg-gradient-to-b from-purple-500 to-indigo-600 rounded-full mr-3"></div>
+              <h3 className="text-lg font-bold text-gray-100 font-display">ADD RECIPE</h3>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">Build arsenal</p>
             <Link
               href="/recipes/add"
-              className="w-full inline-block text-center px-4 py-2 bg-indigo-600 text-white rounded-md
-                       hover:bg-indigo-700 focus:outline-none focus:ring-2
-                       focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full inline-block text-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600
+                       text-white font-bold text-sm rounded hover:scale-105 transition-all duration-200 uppercase tracking-wide"
             >
-              Add Recipe
+              Create
             </Link>
           </div>
         </div>
