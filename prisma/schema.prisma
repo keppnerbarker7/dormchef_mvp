@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Account {
@@ -16,12 +16,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -46,7 +46,7 @@ model User {
   username             String?   @unique
   displayName          String?
   school               String?
-  dietaryRestrictions  String[]
+  dietaryRestrictions  Json
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -74,12 +74,12 @@ model Recipe {
   description  String?
   imageUrl     String?
   ingredients  Json     // Array of Ingredient objects
-  instructions String[] // Array of instruction strings
+  instructions Json     // Array of instruction strings
   prepTime     Int      // minutes
   cookTime     Int      // minutes
   servings     Int
   difficulty   String   // 'Easy' | 'Medium' | 'Hard'
-  tags         String[]
+  tags         Json
   isPublic     Boolean  @default(true)
   authorId     String
   createdAt    DateTime @default(now())
