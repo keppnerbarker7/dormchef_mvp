@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -24,8 +21,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -39,28 +35,26 @@ model Session {
 }
 
 model User {
-  id                   String    @id @default(cuid())
-  name                 String?
-  email                String    @unique
-  emailVerified        DateTime?
-  image                String?
-  username             String?   @unique
-  displayName          String?
-  school               String?
-  bio                  String?
-  dietaryRestrictions  Json
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-
-  // Relations
-  accounts             Account[]
-  sessions             Session[]
-  recipes              Recipe[]
-  mealPlans            MealPlan[]
-  shoppingLists        ShoppingList[]
-  sentFriendRequests   Friendship[] @relation("FriendshipRequester")
-  receivedFriendRequests Friendship[] @relation("FriendshipAddressee")
-  importedRecipes      ImportedRecipe[]
+  id                     String           @id @default(cuid())
+  name                   String?
+  email                  String           @unique
+  emailVerified          DateTime?
+  image                  String?
+  username               String?          @unique
+  displayName            String?
+  school                 String?
+  bio                    String?
+  dietaryRestrictions    Json
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  accounts               Account[]
+  receivedFriendRequests Friendship[]     @relation("FriendshipAddressee")
+  sentFriendRequests     Friendship[]     @relation("FriendshipRequester")
+  importedRecipes        ImportedRecipe[]
+  mealPlans              MealPlan[]
+  recipes                Recipe[]
+  sessions               Session[]
+  shoppingLists          ShoppingList[]
 }
 
 model VerificationToken {
@@ -72,25 +66,23 @@ model VerificationToken {
 }
 
 model Recipe {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
   description  String?
   imageUrl     String?
-  ingredients  Json     // Array of Ingredient objects with category
-  instructions Json     // Array of instruction strings
-  prepTime     Int      // minutes
-  cookTime     Int      // minutes
+  ingredients  Json
+  instructions Json
+  prepTime     Int
+  cookTime     Int
   servings     Int
-  difficulty   String   // 'Easy' | 'Medium' | 'Hard'
-  tags         String[] // PostgreSQL text array
-  isPublic     Boolean  @default(true)
+  difficulty   String
+  tags         String[]
+  isPublic     Boolean       @default(true)
   authorId     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relations
-  author       User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   plannedMeals PlannedMeal[]
+  author       User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
   @@index([isPublic])
@@ -99,14 +91,12 @@ model Recipe {
 }
 
 model MealPlan {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   userId        String
   weekStartDate DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Relations
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   meals         PlannedMeal[]
 
   @@unique([userId, weekStartDate])
@@ -116,12 +106,10 @@ model MealPlan {
 model PlannedMeal {
   id         String   @id @default(cuid())
   mealPlanId String
-  day        Int      // 0-6 (Sunday-Saturday)
-  mealType   String   // 'breakfast' | 'lunch' | 'dinner'
+  day        Int
+  mealType   String
   recipeId   String
   createdAt  DateTime @default(now())
-
-  // Relations
   mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
   recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
@@ -133,13 +121,11 @@ model Friendship {
   id          String   @id @default(cuid())
   requesterId String
   addresseeId String
-  status      String   // 'pending' | 'accepted' | 'declined'
+  status      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  // Relations
-  requester   User @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
-  addressee   User @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  addressee   User     @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  requester   User     @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
 
   @@unique([requesterId, addresseeId])
   @@index([requesterId])
@@ -150,58 +136,51 @@ model ShoppingList {
   id            String   @id @default(cuid())
   userId        String
   weekStartDate DateTime
-  items         Json     // Array of ShoppingListItem objects
+  items         Json
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  // Relations
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, weekStartDate])
   @@index([userId])
 }
 
-// Imported Recipe models (from URL import feature)
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model ImportedRecipe {
-  id               String   @id @default(uuid()) @db.Uuid
-  userId           String   // Multi-tenant: owner of this import
+  id               String                     @id @default(uuid()) @db.Uuid
+  userId           String
   sourceUrl        String
   canonicalUrl     String?
   title            String
   description      String?
   imageUrl         String?
-  yield            String?  // e.g., "4 servings"
+  yield            String?
   totalTimeMinutes Int?
-  instructions     Json     @default("[]")
+  instructions     Json                       @default("[]")
   nutrition        Json?
-  tags             String[] // PostgreSQL text array
+  tags             String[]
   author           String?
   attributionHtml  String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  // Relations
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
+  user             User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
   ingredients      ImportedRecipeIngredient[]
 
+  @@unique([userId, sourceUrl])
   @@index([userId])
   @@index([canonicalUrl])
   @@index([sourceUrl])
   @@index([title])
-  @@unique([userId, sourceUrl])
-  // NOTE: Each user can import the same URL, but only once per user
 }
 
 model ImportedRecipeIngredient {
-  id       String   @id @default(uuid()) @db.Uuid
-  recipeId String   @db.Uuid
-  raw      String   // Original ingredient text
-  qty      Decimal? // Parsed quantity (supports fractions & decimals)
-  unit     String?  // Normalized unit (tsp, cup, oz, etc)
-  item     String?  // Ingredient item name
-  position Int?     // Preserve order
-
-  // Relations
+  id       String         @id @default(uuid()) @db.Uuid
+  recipeId String         @db.Uuid
+  raw      String
+  qty      Decimal?
+  unit     String?
+  item     String?
+  position Int?
   recipe   ImportedRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@index([recipeId])

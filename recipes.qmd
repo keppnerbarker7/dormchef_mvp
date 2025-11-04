@@ -1,0 +1,302 @@
+---
+title: "Recipe Import"
+---
+
+<style>
+/* Recipe Import Page Styles */
+.import-section {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.import-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.import-form label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.import-form input[type="url"] {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.import-form input[type="url"]:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.import-form button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.import-form button:hover {
+  background: #0056b3;
+}
+
+/* Result Display */
+#import-result {
+  margin-top: 2rem;
+}
+
+.recipe-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.recipe-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.recipe-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recipe-meta h2 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.recipe-description {
+  color: #666;
+  line-height: 1.6;
+}
+
+.recipe-author {
+  color: #888;
+  font-style: italic;
+  margin: 0.5rem 0;
+}
+
+.recipe-info {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.recipe-info span {
+  color: #555;
+}
+
+.recipe-body {
+  padding: 1.5rem;
+}
+
+.recipe-section {
+  margin-bottom: 2rem;
+}
+
+.recipe-section h3 {
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+}
+
+.ingredients-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ingredients-list li:last-child {
+  border-bottom: none;
+}
+
+.instructions-list {
+  counter-reset: step-counter;
+  list-style: none;
+  padding: 0;
+}
+
+.instructions-list li {
+  counter-increment: step-counter;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  line-height: 1.6;
+}
+
+.recipe-footer {
+  padding: 1.5rem;
+  border-top: 2px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recipe-source {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.recipe-source a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.recipe-source a:hover {
+  text-decoration: underline;
+}
+
+.save-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: #28a745;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.save-btn:hover {
+  background: #218838;
+}
+
+.saved-indicator {
+  color: #28a745;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Loading and Error States */
+.loading-message, .error-message {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.spinner {
+  margin: 0 auto 1rem;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #dc3545;
+}
+
+.error-message h3 {
+  margin-top: 0;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .recipe-header {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .recipe-image {
+    width: 300px;
+    height: 200px;
+    flex-shrink: 0;
+  }
+
+  .recipe-meta {
+    flex: 1;
+  }
+}
+</style>
+
+## Import Recipe from URL
+
+Paste a recipe URL below to import it into DormChef. We support most major recipe sites and blogs that include structured recipe data.
+
+<div class="import-section">
+  <form id="import-recipe-form" class="import-form">
+    <div>
+      <label for="recipe-url-input">Recipe URL</label>
+      <input
+        type="url"
+        id="recipe-url-input"
+        name="url"
+        placeholder="https://example.com/recipe"
+        required
+      />
+    </div>
+    <button type="submit">Import Recipe</button>
+  </form>
+
+  <div id="import-result"></div>
+</div>
+
+<script type="module">
+  import { initRecipeImport } from './assets/js/recipe-import.js';
+  initRecipeImport();
+</script>
+
+## How It Works
+
+1. **Paste URL** - Enter the URL of any recipe page from popular recipe sites
+2. **Preview** - We'll extract the recipe data and show you a preview
+3. **Save** - Optionally save the recipe to your DormChef collection
+
+### Supported Sites
+
+Our importer works with sites that use structured data (JSON-LD, Microdata), including:
+
+- AllRecipes
+- Food Network
+- Bon Appétit
+- NYT Cooking
+- Serious Eats
+- And many food blogs with Schema.org recipe markup
+
+### What Gets Imported
+
+- Recipe title and description
+- Ingredients list with quantities
+- Step-by-step instructions
+- Cooking time and servings
+- Recipe images
+- Nutrition information (when available)

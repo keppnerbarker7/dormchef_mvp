@@ -1,0 +1,21 @@
+[build]
+  publish = ".next"
+  command = "prisma generate && npm run build"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  included_files = ["node_modules/.prisma/client/**", "node_modules/@prisma/client/**"]
+  external_node_modules = ["@prisma/client", ".prisma/client"]
+
+# Removed redirect - now using Next.js API route at /api/import-recipe
+# [[redirects]]
+#   from = "/api/import-recipe"
+#   to = "/.netlify/functions/import-recipe"
+#   status = 200
+
+[dev]
+  command = "npm run dev"
+  targetPort = 3000
+  publish = ".next"
+  autoLaunch = true

@@ -7,17 +7,14 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     let searchParams: URLSearchParams;
     try {
       const url = new URL(request.url);
       searchParams = url.searchParams;
-    } catch (error) {
+    } catch {
       console.error('Invalid URL:', request.url);
       searchParams = new URLSearchParams();
     }
@@ -27,7 +24,7 @@ export async function GET(request: NextRequest) {
     const tags = searchParams.get('tags')?.split(',').filter(Boolean) || [];
 
     // Build where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       where.OR = [
@@ -73,8 +70,21 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Imported recipe fetch error:', error);
+    console.error('Environment check:', {
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      hasClerkPublishable: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      hasClerkSecret: !!process.env.CLERK_SECRET_KEY,
+    });
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        env: {
+          hasDatabaseUrl: !!process.env.DATABASE_URL,
+          hasClerkPublishable: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+          hasClerkSecret: !!process.env.CLERK_SECRET_KEY,
+        },
+      },
       { status: 500 }
     );
   }
