@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import RecipeCard from '@/components/RecipeCard';
+import ImportedRecipeCard from '@/components/ImportedRecipeCard';
 import SearchFilters from '@/components/SearchFilters';
 
 interface Recipe {
@@ -27,6 +28,31 @@ interface Recipe {
   updatedAt: string;
 }
 
+interface ImportedRecipe {
+  id: string;
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  yield?: string;
+  totalTimeMinutes?: number;
+  instructions: string[];
+  nutrition?: Record<string, string | number>;
+  tags: string[];
+  author?: string;
+  sourceUrl: string;
+  canonicalUrl?: string;
+  createdAt: string;
+  ingredients: Array<{
+    id: string;
+    raw: string;
+    qty?: number;
+    unit?: string;
+    item?: string;
+  }>;
+}
+
+type DisplayRecipe = Recipe | (ImportedRecipe & { isImported: true });
+
 interface RecipesResponse {
   recipes: Recipe[];
   total: number;
@@ -45,7 +71,7 @@ interface FilterState {
 
 export default function RecipesPage() {
   const { user, isLoaded } = useUser();
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<DisplayRecipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filters, setFilters] = useState<FilterState>({
@@ -59,6 +85,13 @@ export default function RecipesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  // Import feature state
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importUrl, setImportUrl] = useState('');
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState('');
+  const [importedRecipe, setImportedRecipe] = useState<ImportedRecipe | null>(null);
 
   const fetchRecipes = async (page = 1) => {
     try {
@@ -77,15 +110,36 @@ export default function RecipesPage() {
       if (filters.authorId) params.append('authorId', filters.authorId);
       if (filters.isPublic !== null) params.append('isPublic', filters.isPublic.toString());
 
-      const response = await fetch(`/api/recipes?${params}`);
+      // Fetch both user-created and imported recipes in parallel
+      const [userRecipesRes, importedRecipesRes] = await Promise.all([
+        fetch(`/api/recipes?${params}`),
+        fetch(`/api/imported-recipes?${params}`),
+      ]);
 
-      if (!response.ok) {
+      if (!userRecipesRes.ok || !importedRecipesRes.ok) {
         throw new Error('Failed to fetch recipes');
       }
 
-      const data: RecipesResponse = await response.json();
-      setRecipes(data.recipes);
-      setTotalPages(data.totalPages);
+      const userRecipesData = await userRecipesRes.json();
+      const importedRecipesData = await importedRecipesRes.json();
+
+      // Mark imported recipes with isImported flag
+      const importedRecipes = importedRecipesData.recipes.map((recipe: ImportedRecipe) => ({
+        ...recipe,
+        isImported: true,
+      }));
+
+      // Combine and sort by creation date
+      const allRecipes: DisplayRecipe[] = [
+        ...userRecipesData.recipes,
+        ...importedRecipes,
+      ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+      setRecipes(allRecipes);
+
+      // Calculate total pages based on combined totals
+      const totalItems = (userRecipesData.pagination?.total || 0) + (importedRecipesData.pagination?.total || 0);
+      setTotalPages(Math.ceil(totalItems / 12));
       setCurrentPage(page);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load recipes');
@@ -104,6 +158,71 @@ export default function RecipesPage() {
 
   const handlePageChange = (page: number) => {
     fetchRecipes(page);
+  };
+
+  // Import recipe handlers
+  const handleImportRecipe = async () => {
+    if (!importUrl.trim()) {
+      setImportError('Please enter a valid URL');
+      return;
+    }
+
+    try {
+      setImporting(true);
+      setImportError('');
+
+      const response = await fetch(`/api/import-recipe?url=${encodeURIComponent(importUrl)}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to import recipe');
+      }
+
+      setImportedRecipe(data.recipe);
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : 'Failed to import recipe');
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const handleSaveImportedRecipe = async () => {
+    if (!importedRecipe) return;
+
+    try {
+      setImporting(true);
+      setImportError('');
+
+      const response = await fetch('/api/import-recipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: importUrl }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save recipe');
+      }
+
+      // Close modal and refresh recipes
+      setShowImportModal(false);
+      setImportUrl('');
+      setImportedRecipe(null);
+      fetchRecipes(1);
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : 'Failed to save recipe');
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const resetImportModal = () => {
+    setShowImportModal(false);
+    setImportUrl('');
+    setImportedRecipe(null);
+    setImportError('');
   };
 
   if (!isLoaded) {
@@ -143,9 +262,9 @@ export default function RecipesPage() {
                   <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
                 </svg>
               </div>
-              COMMAND CENTER
+              Dashboard
             </Link>
-            <h2 className="text-2xl font-bold text-accent-orange font-display tracking-tight">FUEL ARSENAL</h2>
+            <h2 className="text-2xl font-bold text-accent-orange font-display tracking-tight">Recipes</h2>
           </div>
         </div>
       </div>
@@ -157,16 +276,25 @@ export default function RecipesPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className="text-5xl font-bold mb-4 font-display tracking-tight text-gray-100">
-                  POWER
-                  <span className="text-accent-orange block">RECIPES</span>
+                  Browse
+                  <span className="text-accent-orange block">Recipes</span>
                 </h1>
                 <p className="text-xl text-gray-300 font-medium">
-                  Your arsenal of high-performance nutrition.
-                  <span className="text-accent-orange font-bold"> Fuel your gains.</span>
+                  Your collection of high-performance nutrition.
+                  <span className="text-accent-orange font-bold"> Eat well, perform better.</span>
                 </p>
               </div>
 
               <div className="flex items-center gap-4 mt-6 md:mt-0">
+                {/* Import Recipe Button */}
+                <button
+                  onClick={() => setShowImportModal(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold uppercase tracking-wide
+                           hover:scale-105 transition-all duration-200 flex items-center gap-2 shadow-lg"
+                >
+                  <span className="text-xl">🔗</span>
+                  Import from URL
+                </button>
                 {/* Add Recipe Button */}
                 <Link
                   href="/recipes/add"
@@ -174,7 +302,7 @@ export default function RecipesPage() {
                            hover:scale-105 transition-all duration-200 flex items-center gap-2 shadow-lg"
                 >
                   <span className="text-xl">⚡</span>
-                  ADD POWER RECIPE
+                  Add Recipe
                 </Link>
                 {/* View Mode Toggle */}
                 <div className="flex stats-hud rounded-xl p-1">
@@ -211,7 +339,7 @@ export default function RecipesPage() {
           <div className="absolute top-6 right-6 stats-hud rounded-xl p-4 hidden lg:block">
             <div className="text-center">
               <div className="text-2xl font-bold text-accent-orange mb-1">{recipes.length}</div>
-              <div className="text-xs text-gray-400 uppercase tracking-wide">Power Recipes</div>
+              <div className="text-xs text-gray-400 uppercase tracking-wide">Recipes</div>
             </div>
           </div>
         </div>
@@ -226,18 +354,18 @@ export default function RecipesPage() {
         {/* Results Info */}
         <div className="flex items-center justify-between mb-8">
           <div className="stats-hud rounded-xl px-6 py-3">
-            <p className="text-gray-300 font-medium">
+            <div className="text-gray-300 font-medium">
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-accent-orange rounded-full animate-pulse"></div>
-                  Scanning arsenal...
+                  <span className="w-2 h-2 bg-accent-orange rounded-full animate-pulse inline-block"></span>
+                  Loading recipes...
                 </span>
               ) : (
                 <span>
-                  <span className="text-accent-orange font-bold">{recipes.length}</span> power recipes ready
+                  <span className="text-accent-orange font-bold">{recipes.length}</span> recipes available
                 </span>
               )}
-            </p>
+            </div>
           </div>
 
           {totalPages > 1 && (
@@ -288,14 +416,29 @@ export default function RecipesPage() {
               ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
               : "space-y-4 mb-8"
           }>
-            {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                viewMode={viewMode}
-                onUpdate={() => fetchRecipes(currentPage)}
-              />
-            ))}
+            {recipes.map((recipe) => {
+              // Check if this is an imported recipe
+              if ('isImported' in recipe && recipe.isImported) {
+                return (
+                  <ImportedRecipeCard
+                    key={recipe.id}
+                    recipe={recipe}
+                    viewMode={viewMode}
+                    onUpdate={() => fetchRecipes(currentPage)}
+                  />
+                );
+              }
+
+              // Regular user-created recipe
+              return (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  viewMode={viewMode}
+                  onUpdate={() => fetchRecipes(currentPage)}
+                />
+              );
+            })}
           </div>
         )}
 
@@ -305,11 +448,11 @@ export default function RecipesPage() {
             <div className="relative z-10">
               <div className="text-8xl mb-6">💪</div>
               <h3 className="text-3xl font-bold text-gray-100 mb-4 font-display tracking-tight">
-                ARSENAL EMPTY
+                No Recipes Yet
               </h3>
               <p className="text-xl text-gray-300 mb-8 font-medium">
-                Time to build your <span className="text-accent-orange font-bold">power recipe collection</span>.
-                <span className="block mt-2">Your gains are waiting.</span>
+                Time to build your <span className="text-accent-orange font-bold">recipe collection</span>.
+                <span className="block mt-2">Start creating or importing recipes.</span>
               </p>
               <Link
                 href="/recipes/add"
@@ -317,7 +460,7 @@ export default function RecipesPage() {
                          hover:scale-105 transition-all duration-200 uppercase tracking-wide shadow-2xl inline-flex items-center gap-3"
               >
                 <span className="text-2xl">⚡</span>
-                CREATE FIRST POWER RECIPE
+                Create First Recipe
               </Link>
             </div>
           </div>
@@ -370,6 +513,203 @@ export default function RecipesPage() {
           </div>
         )}
       </div>
+
+      {/* Import Recipe Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border-2 border-accent-orange rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gray-900 border-b border-gray-800 p-6 flex justify-between items-center">
+              <h2 className="text-3xl font-bold text-accent-orange font-display tracking-tight">
+                🔗 Import Recipe
+              </h2>
+              <button
+                onClick={resetImportModal}
+                className="text-gray-400 hover:text-accent-orange transition-colors text-2xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6">
+              {/* Import Form */}
+              {!importedRecipe && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-gray-300 font-bold mb-2">
+                      Recipe URL
+                    </label>
+                    <input
+                      type="url"
+                      value={importUrl}
+                      onChange={(e) => setImportUrl(e.target.value)}
+                      placeholder="https://example.com/recipe"
+                      className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl text-white
+                               focus:border-accent-orange focus:outline-none transition-colors"
+                      disabled={importing}
+                    />
+                    <p className="text-gray-400 text-sm mt-2">
+                      Paste a URL from AllRecipes, Food Network, NYT Cooking, or any site with structured recipe data
+                    </p>
+                  </div>
+
+                  {importError && (
+                    <div className="bg-accent-red/20 border border-accent-red rounded-xl p-4">
+                      <p className="text-accent-red font-bold">⚠️ {importError}</p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleImportRecipe}
+                    disabled={importing || !importUrl.trim()}
+                    className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold uppercase tracking-wide
+                             hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+                             flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    {importing ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Extracting recipe data...
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xl">⚡</span>
+                        Import Recipe
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* Recipe Preview */}
+              {importedRecipe && (
+                <div className="space-y-6">
+                  <div className="bg-accent-green/20 border border-accent-green rounded-xl p-4">
+                    <p className="text-accent-green font-bold">✓ Recipe extracted successfully!</p>
+                  </div>
+
+                  {/* Recipe Details */}
+                  <div className="stats-hud rounded-xl p-6 space-y-4">
+                    {importedRecipe.imageUrl && (
+                      <img
+                        src={importedRecipe.imageUrl}
+                        alt={importedRecipe.title}
+                        className="w-full h-64 object-cover rounded-xl"
+                      />
+                    )}
+
+                    <h3 className="text-2xl font-bold text-white">{importedRecipe.title}</h3>
+
+                    {importedRecipe.description && (
+                      <p className="text-gray-300">{importedRecipe.description}</p>
+                    )}
+
+                    <div className="flex gap-6 text-sm flex-wrap">
+                      {importedRecipe.yield && typeof importedRecipe.yield === 'string' && (
+                        <div>
+                          <span className="text-gray-400">Yield:</span>{' '}
+                          <span className="text-accent-orange font-bold">{importedRecipe.yield}</span>
+                        </div>
+                      )}
+                      {importedRecipe.totalTimeMinutes && (
+                        <div>
+                          <span className="text-gray-400">Time:</span>{' '}
+                          <span className="text-accent-green font-bold">{importedRecipe.totalTimeMinutes} min</span>
+                        </div>
+                      )}
+                      {importedRecipe.author && typeof importedRecipe.author === 'string' && (
+                        <div>
+                          <span className="text-gray-400">By:</span>{' '}
+                          <span className="text-white">{importedRecipe.author}</span>
+                        </div>
+                      )}
+                      {importedRecipe.nutrition?.calories && (
+                        <div>
+                          <span className="text-gray-400">Calories:</span>{' '}
+                          <span className="text-accent-green font-bold">{importedRecipe.nutrition.calories}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Ingredients */}
+                    {importedRecipe.ingredients && Array.isArray(importedRecipe.ingredients) && importedRecipe.ingredients.length > 0 && (
+                      <div>
+                        <h4 className="text-xl font-bold text-accent-orange mb-3">💪 Ingredients</h4>
+                        <ul className="space-y-2">
+                          {importedRecipe.ingredients.map((ing, idx: number) => (
+                            <li key={idx} className="text-gray-300 flex items-start gap-2">
+                              <span className="text-accent-orange">•</span>
+                              <span>{typeof ing === 'object' ? ing.raw : String(ing)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Instructions */}
+                    {importedRecipe.instructions && Array.isArray(importedRecipe.instructions) && importedRecipe.instructions.length > 0 && (
+                      <div>
+                        <h4 className="text-xl font-bold text-accent-orange mb-3">⚡ Instructions</h4>
+                        <ol className="space-y-3">
+                          {importedRecipe.instructions.map((step, idx: number) => (
+                            <li key={idx} className="text-gray-300 flex gap-3">
+                              <span className="text-accent-orange font-bold flex-shrink-0">{idx + 1}.</span>
+                              <span>{String(step)}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+
+                    <p className="text-gray-400 text-sm italic">
+                      Source: <a href={importedRecipe.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-accent-orange hover:underline">
+                        {importedRecipe.sourceUrl}
+                      </a>
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleSaveImportedRecipe}
+                      disabled={importing}
+                      className="flex-1 px-6 py-4 gradient-orange text-white rounded-xl font-bold uppercase tracking-wide
+                               hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+                               disabled:hover:scale-100 flex items-center justify-center gap-2 shadow-lg"
+                    >
+                      {importing ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-xl">💾</span>
+                          Save Recipe
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={resetImportModal}
+                      disabled={importing}
+                      className="px-6 py-4 bg-gray-800 text-gray-300 rounded-xl font-bold uppercase tracking-wide
+                               hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {importError && (
+                    <div className="bg-accent-red/20 border border-accent-red rounded-xl p-4">
+                      <p className="text-accent-red font-bold">⚠️ {importError}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

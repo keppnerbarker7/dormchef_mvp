@@ -84,14 +84,32 @@ export default function MealPlannerPage() {
     return date;
   }
 
-  // Fetch recipes
+  // Fetch recipes (both user-created and imported)
   const fetchRecipes = async () => {
     try {
-      const response = await fetch('/api/recipes?limit=20');
-      if (!response.ok) throw new Error('Failed to fetch recipes');
+      // Fetch both user-created and imported recipes in parallel
+      const [userRecipesRes, importedRecipesRes] = await Promise.all([
+        fetch('/api/recipes?limit=100'),
+        fetch('/api/imported-recipes?limit=100'),
+      ]);
 
-      const data = await response.json();
-      setRecipes(data.recipes || []);
+      if (!userRecipesRes.ok || !importedRecipesRes.ok) {
+        throw new Error('Failed to fetch recipes');
+      }
+
+      const userRecipesData = await userRecipesRes.json();
+      const importedRecipesData = await importedRecipesRes.json();
+
+      // Combine both types of recipes
+      const allRecipes = [
+        ...(userRecipesData.recipes || []),
+        ...(importedRecipesData.recipes || []).map((r: any) => ({
+          ...r,
+          isImported: true,
+        })),
+      ];
+
+      setRecipes(allRecipes);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load recipes');
     }

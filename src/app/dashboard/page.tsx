@@ -68,11 +68,11 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <div className="mb-8">
               <h2 className="text-5xl font-bold text-gray-100 mb-4 font-display tracking-tight">
-                FUEL YOUR GRIND.
-                <span className="text-accent-orange block">FEED YOUR GAINS.</span>
+                Your Nutrition.
+                <span className="text-accent-orange block">Simplified.</span>
               </h2>
               <p className="text-xl text-gray-300 font-medium">
-                Command center for peak nutrition performance.
+                Your personal performance nutrition dashboard.
               </p>
             </div>
 
@@ -80,7 +80,7 @@ export default function DashboardPage() {
               {/* Stats HUD */}
               <div className="stats-hud rounded-xl p-6 pulse-orange">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-gray-100 font-display">PERFORMANCE METRICS</h3>
+                  <h3 className="text-2xl font-bold text-gray-100 font-display">Weekly Progress</h3>
                   <div className="w-3 h-3 bg-accent-orange rounded-full animate-pulse"></div>
                 </div>
 
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-accent-steel">5</div>
-                      <div className="text-xs text-gray-400 uppercase tracking-wide">Squad</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wide">Friends</div>
                     </div>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export default function DashboardPage() {
               {/* Next Meal Preview */}
               <div className="meal-preview rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-gray-100 font-display">NEXT FUEL UP</h3>
+                  <h3 className="text-2xl font-bold text-gray-100 font-display">Next Meal</h3>
                   <div className="text-accent-green text-sm font-medium bg-accent-green/20 px-3 py-1 rounded-full">
                     TODAY 6:30 PM
                   </div>
@@ -158,7 +158,7 @@ export default function DashboardPage() {
               {/* Squad Feed */}
               <div className="meal-preview rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-gray-100 font-display">SQUAD SPOTLIGHT</h3>
+                  <h3 className="text-2xl font-bold text-gray-100 font-display">Friend Activity</h3>
                   <div className="text-accent-steel text-sm font-medium">@mike_lifts</div>
                 </div>
 
@@ -179,7 +179,7 @@ export default function DashboardPage() {
 
                 <div className="mt-6 pt-4 border-t border-gray-700">
                   <Link href="/friends" className="text-accent-steel hover:text-accent-green transition-colors text-sm font-medium">
-                    See what the squad is cooking →
+                    See what friends are cooking →
                   </Link>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export default function DashboardPage() {
           <div className="nav-card p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <div className="w-2 h-6 gradient-orange rounded-full mr-3"></div>
-              <h3 className="text-lg font-bold text-gray-100 font-display">FUEL STATION</h3>
+              <h3 className="text-lg font-bold text-gray-100 font-display">Recipes</h3>
             </div>
             <p className="text-gray-400 text-sm mb-4">Browse recipes</p>
             <Link
@@ -207,9 +207,9 @@ export default function DashboardPage() {
           <div className="nav-card p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <div className="w-2 h-6 gradient-green rounded-full mr-3"></div>
-              <h3 className="text-lg font-bold text-gray-100 font-display">MEAL PREP</h3>
+              <h3 className="text-lg font-bold text-gray-100 font-display">Meal Planner</h3>
             </div>
-            <p className="text-gray-400 text-sm mb-4">Plan strategy</p>
+            <p className="text-gray-400 text-sm mb-4">Plan your week</p>
             <Link
               href="/meal-planner"
               className="w-full inline-block text-center px-4 py-2 gradient-green text-white font-bold text-sm
@@ -222,9 +222,9 @@ export default function DashboardPage() {
           <div className="nav-card p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <div className="w-2 h-6 gradient-red rounded-full mr-3"></div>
-              <h3 className="text-lg font-bold text-gray-100 font-display">SUPPLY RUN</h3>
+              <h3 className="text-lg font-bold text-gray-100 font-display">Shopping List</h3>
             </div>
-            <p className="text-gray-400 text-sm mb-4">Shopping list</p>
+            <p className="text-gray-400 text-sm mb-4">Your grocery list</p>
             <Link
               href="/shopping-list"
               className="w-full inline-block text-center px-4 py-2 gradient-red text-white font-bold text-sm
@@ -237,9 +237,9 @@ export default function DashboardPage() {
           <div className="nav-card p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <div className="w-2 h-6 bg-gradient-to-b from-purple-500 to-indigo-600 rounded-full mr-3"></div>
-              <h3 className="text-lg font-bold text-gray-100 font-display">ADD RECIPE</h3>
+              <h3 className="text-lg font-bold text-gray-100 font-display">Add Recipe</h3>
             </div>
-            <p className="text-gray-400 text-sm mb-4">Build arsenal</p>
+            <p className="text-gray-400 text-sm mb-4">Create new recipe</p>
             <Link
               href="/recipes/add"
               className="w-full inline-block text-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600

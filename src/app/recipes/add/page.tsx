@@ -27,9 +27,9 @@ interface RecipeFormData {
 
 const POWER_TAGS = [
   'Pre-Workout', 'Post-Workout', 'Breakfast', 'Lunch', 'Dinner', 'Snack',
-  'High-Protein', 'Mass Gainer', 'Cutting', 'Bulking', 'Low-Carb', 'Keto',
-  'Quick Fuel', 'Meal Prep', 'One-Pot', 'Budget Beast', 'Vegan Power',
-  'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Recovery Fuel', 'Energy Boost'
+  'High-Protein', 'Weight Gain', 'Low-Calorie', 'Muscle Building', 'Low-Carb', 'Keto',
+  'Quick', 'Meal Prep', 'One-Pot', 'Budget-Friendly', 'Vegan',
+  'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Recovery', 'Energy'
 ];
 
 const UNITS = [
@@ -176,8 +176,8 @@ export default function AddRecipePage() {
         router.push('/recipes');
       }, 1500);
 
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -199,11 +199,11 @@ export default function AddRecipePage() {
                     <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
                   </svg>
                 </div>
-                BACK TO ARSENAL
+                Back to Recipes
               </Link>
             </div>
             <h1 className="text-3xl font-bold text-accent-orange font-display tracking-tight">
-              CREATE POWER RECIPE
+              Create Recipe
             </h1>
           </div>
         </div>
@@ -219,7 +219,7 @@ export default function AddRecipePage() {
                   <span className="text-accent-red text-xl">⚠️</span>
                 </div>
                 <div>
-                  <h3 className="text-accent-red font-bold mb-1">SYSTEM ERROR</h3>
+                  <h3 className="text-accent-red font-bold mb-1">Error</h3>
                   <p className="text-gray-300">{error}</p>
                 </div>
               </div>
@@ -233,7 +233,7 @@ export default function AddRecipePage() {
                   <span className="text-accent-green text-xl">✅</span>
                 </div>
                 <div>
-                  <h3 className="text-accent-green font-bold mb-1">RECIPE DEPLOYED</h3>
+                  <h3 className="text-accent-green font-bold mb-1">Recipe Created</h3>
                   <p className="text-gray-300">{success}</p>
                 </div>
               </div>
@@ -245,13 +245,13 @@ export default function AddRecipePage() {
             <div className="relative z-10">
               <h2 className="text-3xl font-bold text-gray-100 mb-6 font-display tracking-tight flex items-center gap-3">
                 <span className="text-accent-orange">💪</span>
-                RECIPE INTEL
+                Recipe Details
               </h2>
 
               <div className="grid grid-cols-1 gap-8">
                 <div>
                   <label htmlFor="title" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
-                    Power Recipe Name *
+                    Recipe Name *
                   </label>
                   <input
                     type="text"
@@ -262,7 +262,7 @@ export default function AddRecipePage() {
                     className="block w-full px-6 py-4 bg-black/40 border border-gray-700 rounded-xl text-white
                              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-orange
                              focus:border-accent-orange font-medium text-lg"
-                    placeholder="e.g. Beast Mode Protein Bowl"
+                    placeholder="e.g. High-Protein Chicken Bowl"
                   />
                 </div>
 
@@ -278,7 +278,7 @@ export default function AddRecipePage() {
                     className="block w-full px-6 py-4 bg-black/40 border border-gray-700 rounded-xl text-white
                              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-orange
                              focus:border-accent-orange font-medium resize-none"
-                    placeholder="Describe your power recipe - what makes it special for athletes?"
+                    placeholder="Describe your recipe - what makes it nutritious and delicious?"
                   />
                 </div>
 
@@ -294,7 +294,7 @@ export default function AddRecipePage() {
                     className="block w-full px-6 py-4 bg-black/40 border border-gray-700 rounded-xl text-white
                              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-orange
                              focus:border-accent-orange font-medium"
-                    placeholder="https://example.com/beast-recipe.jpg"
+                    placeholder="https://example.com/recipe-image.jpg"
                   />
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function AddRecipePage() {
           <div className="stats-hud rounded-xl p-8">
             <h2 className="text-3xl font-bold text-gray-100 mb-6 font-display tracking-tight flex items-center gap-3">
               <span className="text-accent-green">⚡</span>
-              PERFORMANCE SPECS
+              Cooking Info
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -356,7 +356,7 @@ export default function AddRecipePage() {
 
               <div>
                 <label htmlFor="difficulty" className="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">
-                  Intensity Level
+                  Difficulty Level
                 </label>
                 <select
                   id="difficulty"
@@ -365,9 +365,9 @@ export default function AddRecipePage() {
                   className="block w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-xl text-white
                            focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-accent-orange font-medium"
                 >
-                  <option value="Easy">Beginner</option>
-                  <option value="Medium">Intermediate</option>
-                  <option value="Hard">Advanced</option>
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
                 </select>
               </div>
             </div>
@@ -493,7 +493,7 @@ export default function AddRecipePage() {
           {/* FUEL CATEGORIES */}
           <div className="stats-hud rounded-xl p-6">
             <h2 className="text-2xl font-bold text-gray-100 mb-6 font-display tracking-tight uppercase">
-              FUEL CATEGORIES
+              Recipe Categories
             </h2>
             <div className="flex flex-wrap gap-3">
               {POWER_TAGS.map(tag => (
@@ -539,10 +539,10 @@ export default function AddRecipePage() {
                   </div>
                   <div className="ml-4">
                     <span className="text-lg font-bold text-gray-100 font-display uppercase tracking-wide">
-                      SHARE WITH SQUAD
+                      Share with Community
                     </span>
                     <p className="text-sm text-gray-400 font-medium">
-                      Make this power recipe available to other champions
+                      Make this recipe available to other users
                     </p>
                   </div>
                 </label>
@@ -556,7 +556,7 @@ export default function AddRecipePage() {
                          disabled:hover:scale-100 shadow-lg flex items-center gap-3"
               >
                 <span className="text-2xl">⚡</span>
-                {isSubmitting ? 'DEPLOYING RECIPE...' : 'DEPLOY POWER RECIPE'}
+                {isSubmitting ? 'Creating Recipe...' : 'Create Recipe'}
               </button>
             </div>
           </div>

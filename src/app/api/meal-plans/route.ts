@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         id: userId,
         email: `${userId}@temp.clerk`, // Temporary email, should be updated with real data
         username: `user_${userId.slice(-8)}`, // Generate username from user ID
+        dietaryRestrictions: [], // Empty array for new users
       },
     });
 
@@ -117,11 +118,13 @@ export async function POST(request: NextRequest) {
         id: userId,
         email: `${userId}@temp.clerk`, // Temporary email, should be updated with real data
         username: `user_${userId.slice(-8)}`, // Generate username from user ID
+        dietaryRestrictions: [], // Empty array for new users
       },
     });
     console.log('User upsert result:', user);
 
     const { recipeId, day, mealType, weekStart } = await request.json();
+    console.log('POST /api/meal-plans - Received recipeId:', recipeId, 'type:', typeof recipeId);
 
     if (!recipeId || !day || !mealType || !weekStart) {
       return NextResponse.json(
@@ -138,21 +141,79 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify recipe exists and is accessible
-    const recipe = await prisma.recipe.findFirst({
-      where: {
-        id: recipeId,
-        OR: [
-          { isPublic: true },
-          { authorId: userId },
-        ],
-      },
-    });
+    // Check both user-created recipes and imported recipes
+    console.log('Searching for recipe with ID:', recipeId);
+    const [userRecipe, importedRecipe] = await Promise.all([
+      prisma.recipe.findFirst({
+        where: {
+          id: recipeId,
+          OR: [
+            { isPublic: true },
+            { authorId: userId },
+          ],
+        },
+      }),
+      prisma.importedRecipe.findUnique({
+        where: { id: recipeId },
+        include: { ingredients: true },
+      }),
+    ]);
 
-    if (!recipe) {
+    console.log('Found userRecipe:', userRecipe ? userRecipe.id : 'null');
+    console.log('Found importedRecipe:', importedRecipe ? importedRecipe.id : 'null');
+
+    if (!userRecipe && !importedRecipe) {
+      console.log('Recipe not found in either table');
       return NextResponse.json(
         { error: 'Recipe not found or not accessible' },
         { status: 400 }
       );
+    }
+
+    // If it's an imported recipe, convert it to a user recipe first
+    let finalRecipeId = recipeId;
+    if (importedRecipe && !userRecipe) {
+      console.log('🔄 Converting imported recipe to user recipe:', importedRecipe.id);
+      console.log('Imported recipe data:', {
+        title: importedRecipe.title,
+        ingredientsCount: importedRecipe.ingredients?.length,
+        hasInstructions: Array.isArray(importedRecipe.instructions),
+      });
+      // Convert imported recipe to user recipe
+      try {
+        const convertedRecipe = await prisma.recipe.create({
+          data: {
+            title: importedRecipe.title,
+            description: importedRecipe.description || `Imported from ${new URL(importedRecipe.sourceUrl).hostname}`,
+            imageUrl: importedRecipe.imageUrl,
+            ingredients: importedRecipe.ingredients.map((ing) => ({
+              name: ing.item || ing.raw,
+              amount: ing.qty ? Number(ing.qty) : 1,
+              unit: ing.unit || 'unit',
+            })),
+            instructions: Array.isArray(importedRecipe.instructions)
+              ? importedRecipe.instructions
+              : [],
+            prepTime: 0, // Imported recipes don't have separate prep/cook times
+            cookTime: importedRecipe.totalTimeMinutes || 30,
+            servings: importedRecipe.yield ? parseInt(importedRecipe.yield) || 4 : 4,
+            difficulty: 'Medium', // Default difficulty
+            tags: importedRecipe.tags || [],
+            isPublic: false, // Converted recipes are private by default
+            authorId: userId,
+          },
+        });
+        finalRecipeId = convertedRecipe.id;
+        console.log('✅ Converted recipe created with ID:', finalRecipeId, 'type:', typeof finalRecipeId);
+      } catch (conversionError) {
+        console.error('❌ Error converting imported recipe:', conversionError);
+        return NextResponse.json(
+          { error: 'Failed to convert imported recipe' },
+          { status: 500 }
+        );
+      }
+    } else {
+      console.log('Using existing recipe ID:', finalRecipeId);
     }
 
     const weekDate = new Date(weekStart);
@@ -193,22 +254,31 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Creating/updating planned meal with finalRecipeId:', finalRecipeId);
     let meal;
     if (existingMeal) {
+      console.log('Updating existing meal:', existingMeal.id);
       meal = await prisma.plannedMeal.update({
         where: { id: existingMeal.id },
-        data: { recipeId },
+        data: { recipeId: finalRecipeId },
       });
     } else {
+      console.log('Creating new planned meal with:', {
+        mealPlanId: mealPlan.id,
+        day: dayNumber,
+        mealType,
+        recipeId: finalRecipeId,
+      });
       meal = await prisma.plannedMeal.create({
         data: {
           mealPlanId: mealPlan.id,
           day: dayNumber,
           mealType,
-          recipeId,
+          recipeId: finalRecipeId,
         },
       });
     }
+    console.log('✅ Meal saved successfully:', meal.id);
 
     return NextResponse.json({
       message: 'Meal added successfully',

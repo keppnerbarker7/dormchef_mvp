@@ -113,7 +113,7 @@ graph LR
 - Color coding for meal types
 
 #### 3. Social Feed Interface
-**Design Features:**
+**Design Features:**1
 - Instagram-inspired card layout
 - Large recipe images with overlay text
 - Quick action buttons (like, copy, comment)

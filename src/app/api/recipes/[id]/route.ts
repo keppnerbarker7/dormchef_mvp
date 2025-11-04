@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -16,9 +16,11 @@ export async function GET(
       );
     }
 
+    const { id } = await params;
+
     const recipe = await prisma.recipe.findFirst({
       where: {
-        id: params.id,
+        id: id,
         OR: [
           { isPublic: true },
           { authorId: userId },
@@ -55,7 +57,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -67,10 +69,12 @@ export async function PUT(
       );
     }
 
+    const { id } = await params;
+
     // Check if user owns the recipe
     const existingRecipe = await prisma.recipe.findFirst({
       where: {
-        id: params.id,
+        id: id,
         authorId: userId,
       },
     });
@@ -127,7 +131,7 @@ export async function PUT(
 
     // Update recipe
     const updatedRecipe = await prisma.recipe.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         title: title.trim(),
         description: description?.trim() || null,
@@ -168,7 +172,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -180,10 +184,12 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
+
     // Check if user owns the recipe
     const existingRecipe = await prisma.recipe.findFirst({
       where: {
-        id: params.id,
+        id: id,
         authorId: userId,
       },
     });
@@ -197,7 +203,7 @@ export async function DELETE(
 
     // Delete recipe (this will cascade delete meal plans due to foreign key)
     await prisma.recipe.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return NextResponse.json({

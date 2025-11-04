@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    console.log('Shopping list - ensuring user exists:', userId);
     // Ensure user exists in database (create if not exists for Clerk users)
     await prisma.user.upsert({
       where: { id: userId },
@@ -59,6 +60,7 @@ export async function GET(request: NextRequest) {
         id: userId,
         email: `${userId}@temp.clerk`, // Temporary email, should be updated with real data
         username: `user_${userId.slice(-8)}`, // Generate username from user ID
+        dietaryRestrictions: [], // Empty array for new users
       },
     });
 
@@ -117,7 +119,13 @@ export async function GET(request: NextRequest) {
 
     mealPlan.meals.forEach((meal) => {
       if (meal.recipe && Array.isArray(meal.recipe.ingredients)) {
-        allIngredients.push(...(meal.recipe.ingredients as Ingredient[]));
+        const ingredients = (meal.recipe.ingredients as any[]).map((ing) => ({
+          name: ing.name,
+          amount: ing.amount,
+          unit: ing.unit,
+          category: ing.category || 'Other', // Default category if not present
+        }));
+        allIngredients.push(...ingredients);
       }
     });
 
@@ -201,6 +209,7 @@ export async function PUT(request: NextRequest) {
         id: userId,
         email: `${userId}@temp.clerk`, // Temporary email, should be updated with real data
         username: `user_${userId.slice(-8)}`, // Generate username from user ID
+        dietaryRestrictions: [], // Empty array for new users
       },
     });
 

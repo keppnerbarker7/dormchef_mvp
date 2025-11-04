@@ -24,6 +24,7 @@ export async function DELETE(
         id: userId,
         email: `${userId}@temp.clerk`, // Temporary email, should be updated with real data
         username: `user_${userId.slice(-8)}`, // Generate username from user ID
+        dietaryRestrictions: [], // Empty array for new users
       },
     });
 

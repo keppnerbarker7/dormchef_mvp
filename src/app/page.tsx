@@ -44,7 +44,7 @@ export default function HomePage() {
                 className="gradient-orange text-white px-6 py-2 rounded font-bold uppercase tracking-wide
                          hover:scale-105 transition-all duration-200 shadow-lg"
               >
-                Start Training
+                Get Started
               </Link>
             </div>
           </div>
@@ -57,19 +57,19 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 relative z-10">
             <div className="text-center">
               <h1 className="text-6xl md:text-8xl font-bold text-gray-100 mb-8 font-display tracking-tight leading-none">
-                FUEL YOUR
+                PERFORMANCE
                 <br />
-                <span className="text-accent-orange">GRIND.</span>
+                <span className="text-accent-orange">NUTRITION.</span>
                 <br />
-                <span className="text-accent-green">FEED YOUR</span>
+                <span className="text-accent-green">MADE</span>
                 <br />
-                <span className="text-accent-red">GAINS.</span>
+                <span className="text-accent-red">SIMPLE.</span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto font-medium leading-relaxed">
-                The nutrition command center built for college athletes.
-                <span className="text-accent-orange font-bold"> Plan your fuel.</span>
-                <span className="text-accent-green font-bold"> Track your macros.</span>
-                <span className="text-accent-steel font-bold"> Dominate your goals.</span>
+                The nutrition platform built for college athletes.
+                <span className="text-accent-orange font-bold"> Plan your meals.</span>
+                <span className="text-accent-green font-bold"> Track your nutrition.</span>
+                <span className="text-accent-steel font-bold"> Reach your goals.</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Link
@@ -77,7 +77,7 @@ export default function HomePage() {
                   className="gradient-orange text-white px-12 py-6 rounded-lg text-xl font-bold shadow-2xl
                            hover:scale-105 transition-all duration-200 uppercase tracking-wide"
                 >
-                  START TRAINING
+                  Get Started Free
                 </Link>
                 <Link
                   href="/sign-in"
@@ -94,7 +94,7 @@ export default function HomePage() {
           <div className="absolute top-8 right-8 stats-hud rounded-xl p-4 hidden lg:block">
             <div className="text-center">
               <div className="text-2xl font-bold text-accent-orange mb-1">2,847</div>
-              <div className="text-xs text-gray-400 uppercase tracking-wide">Athletes Training</div>
+              <div className="text-xs text-gray-400 uppercase tracking-wide">Active Users</div>
             </div>
           </div>
 
@@ -112,11 +112,11 @@ export default function HomePage() {
             <div className="text-center mb-16">
               <h2 className="text-5xl font-bold text-gray-100 mb-6 font-display tracking-tight">
                 BUILT FOR
-                <span className="text-accent-orange block">CHAMPIONS</span>
+                <span className="text-accent-orange block">ATHLETES</span>
               </h2>
               <p className="text-gray-300 text-xl font-medium max-w-3xl mx-auto">
-                Every tool you need to dominate your nutrition game.
-                <span className="text-accent-orange font-bold"> No compromises.</span>
+                Everything you need to optimize your nutrition.
+                <span className="text-accent-orange font-bold"> Simple. Effective.</span>
               </p>
             </div>
 
@@ -129,10 +129,10 @@ export default function HomePage() {
                   <span className="text-3xl">💪</span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-100 mb-3 group-hover:text-accent-orange transition-colors font-display uppercase tracking-wide">
-                  POWER RECIPES
+                  Performance Kitchen
                 </h3>
                 <p className="text-gray-400 group-hover:text-gray-300 transition-colors leading-relaxed">
-                  High-protein, muscle-building recipes designed for serious athletes
+                  High-protein, nutrient-dense recipes designed for athletic performance
                 </p>
                 <div className="absolute inset-0 bg-gradient-to-t from-accent-orange/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
@@ -145,10 +145,10 @@ export default function HomePage() {
                   <span className="text-3xl">⚡</span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-100 mb-3 group-hover:text-accent-green transition-colors font-display uppercase tracking-wide">
-                  MEAL STRATEGY
+                  Meal Planning
                 </h3>
                 <p className="text-gray-400 group-hover:text-gray-300 transition-colors leading-relaxed">
-                  Strategic meal timing for peak performance and recovery
+                  Smart meal planning for training and competition schedules
                 </p>
                 <div className="absolute inset-0 bg-gradient-to-t from-accent-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
@@ -161,7 +161,7 @@ export default function HomePage() {
                   <span className="text-3xl">🎯</span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-100 mb-3 group-hover:text-accent-red transition-colors font-display uppercase tracking-wide">
-                  MACRO TRACKING
+                  Nutrition Tracking
                 </h3>
                 <p className="text-gray-400 group-hover:text-gray-300 transition-colors leading-relaxed">
                   Smart shopping lists that hit your macro targets every time
@@ -177,10 +177,10 @@ export default function HomePage() {
                   <span className="text-3xl">🔥</span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-100 mb-3 group-hover:text-accent-steel transition-colors font-display uppercase tracking-wide">
-                  SQUAD GAINS
+                  Team Network
                 </h3>
                 <p className="text-gray-400 group-hover:text-gray-300 transition-colors leading-relaxed">
-                  Train with your crew. Share wins, recipes, and motivation
+                  Connect with teammates. Share recipes and progress together
                 </p>
                 <div className="absolute inset-0 bg-gradient-to-t from-accent-steel/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
@@ -193,11 +193,11 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
             <h2 className="text-5xl font-bold text-gray-100 mb-6 font-display tracking-tight">
               READY TO
-              <span className="text-accent-orange block">DOMINATE?</span>
+              <span className="text-accent-orange block">GET STARTED?</span>
             </h2>
             <p className="text-gray-300 text-xl mb-12 font-medium leading-relaxed">
-              Join <span className="text-accent-orange font-bold">2,847+ college athletes</span> who are already crushing their nutrition goals.
-              <span className="text-accent-green font-bold block mt-2">Your gains are waiting.</span>
+              Join <span className="text-accent-orange font-bold">2,847+ college athletes</span> who are optimizing their nutrition.
+              <span className="text-accent-green font-bold block mt-2">Start your journey today.</span>
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link
@@ -205,7 +205,7 @@ export default function HomePage() {
                 className="gradient-orange text-white px-12 py-6 rounded-xl text-xl font-bold shadow-2xl
                          hover:scale-105 transition-all duration-200 uppercase tracking-wide pulse-orange"
               >
-                START TRAINING FREE
+                Get Started Free
               </Link>
               <div className="flex items-center justify-center space-x-2 text-gray-400">
                 <span className="text-sm">💳</span>
@@ -243,7 +243,7 @@ export default function HomePage() {
           <div className="text-center">
             <p className="text-gray-400 font-medium">
               © 2024 <span className="text-accent-orange font-bold">DORMCHEF</span>.
-              Built for champions, by champions.
+              Performance nutrition for college athletes.
             </p>
           </div>
         </div>

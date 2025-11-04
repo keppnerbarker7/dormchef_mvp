@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -46,6 +46,7 @@ model User {
   username             String?   @unique
   displayName          String?
   school               String?
+  bio                  String?
   dietaryRestrictions  Json
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -58,6 +59,7 @@ model User {
   shoppingLists        ShoppingList[]
   sentFriendRequests   Friendship[] @relation("FriendshipRequester")
   receivedFriendRequests Friendship[] @relation("FriendshipAddressee")
+  importedRecipes      ImportedRecipe[]
 }
 
 model VerificationToken {
@@ -73,13 +75,13 @@ model Recipe {
   title        String
   description  String?
   imageUrl     String?
-  ingredients  Json     // Array of Ingredient objects
+  ingredients  Json     // Array of Ingredient objects with category
   instructions Json     // Array of instruction strings
   prepTime     Int      // minutes
   cookTime     Int      // minutes
   servings     Int
   difficulty   String   // 'Easy' | 'Medium' | 'Hard'
-  tags         Json
+  tags         String[] // PostgreSQL text array
   isPublic     Boolean  @default(true)
   authorId     String
   createdAt    DateTime @default(now())
@@ -91,6 +93,8 @@ model Recipe {
 
   @@index([authorId])
   @@index([isPublic])
+  @@index([prepTime])
+  @@index([cookTime])
 }
 
 model MealPlan {
@@ -154,4 +158,51 @@ model ShoppingList {
 
   @@unique([userId, weekStartDate])
   @@index([userId])
+}
+
+// Imported Recipe models (from URL import feature)
+model ImportedRecipe {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   // Multi-tenant: owner of this import
+  sourceUrl        String
+  canonicalUrl     String?
+  title            String
+  description      String?
+  imageUrl         String?
+  yield            String?  // e.g., "4 servings"
+  totalTimeMinutes Int?
+  instructions     Json     @default("[]")
+  nutrition        Json?
+  tags             String[] // PostgreSQL text array
+  author           String?
+  attributionHtml  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredients      ImportedRecipeIngredient[]
+
+  @@index([userId])
+  @@index([canonicalUrl])
+  @@index([sourceUrl])
+  @@index([title])
+  @@unique([userId, sourceUrl])
+  // NOTE: Each user can import the same URL, but only once per user
+}
+
+model ImportedRecipeIngredient {
+  id       String   @id @default(uuid()) @db.Uuid
+  recipeId String   @db.Uuid
+  raw      String   // Original ingredient text
+  qty      Decimal? // Parsed quantity (supports fractions & decimals)
+  unit     String?  // Normalized unit (tsp, cup, oz, etc)
+  item     String?  // Ingredient item name
+  position Int?     // Preserve order
+
+  // Relations
+  recipe   ImportedRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@index([item])
 }
