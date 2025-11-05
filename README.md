@@ -1,4 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DormChef
+
+A Next.js recipe management and meal planning application for college students, built with Prisma, Supabase, and Clerk authentication.
+
+## ⚠️ CRITICAL: Vercel Deployment Requirements
+
+**Before deploying to Vercel, you MUST configure the DATABASE_URL correctly:**
+
+### Required DATABASE_URL Format:
+
+```
+postgresql://postgres.pluoonxoshbzwpbyhpib:[PASSWORD]@aws-0-us-west-2.pooler.supabase.com:6543/postgres?pgbouncer=true
+```
+
+### Critical Components:
+
+- ✅ **Port**: `6543` (NOT 5432)
+- ✅ **Host**: `aws-0-us-west-2.pooler.supabase.com` (must include `.pooler`)
+- ✅ **Parameter**: `?pgbouncer=true` (REQUIRED - disables prepared statements)
+- ✅ **Method**: Transaction pooler (NOT Direct connection or Session pooler)
+
+### How to Get the Correct Connection String:
+
+1. Go to [Supabase Dashboard](https://app.supabase.com/project/pluoonxoshbzwpbyhpib/settings/database)
+2. Click "Connection String" tab
+3. Select **"Transaction pooler"** from the Method dropdown
+4. Copy the connection string (will show port 6543)
+5. Replace `[YOUR-PASSWORD]` with your actual password
+6. **ADD** `?pgbouncer=true` to the end
+7. Update in Vercel → Settings → Environment Variables → DATABASE_URL
+8. **Redeploy** with "Use existing Build Cache" unchecked
+
+### Why This Matters:
+
+Vercel uses serverless functions (AWS Lambda) which create new database connections on each invocation. Direct connections (port 5432) will exhaust the connection pool quickly. Transaction pooler with PgBouncer (port 6543) reuses connections and handles unlimited concurrent requests.
+
+**Missing `?pgbouncer=true` will cause this error:**
+
+```
+PostgresError: prepared statement "s0" already exists
+```
+
+**Using wrong port will cause this error:**
+
+```
+Can't reach database server at aws-0-us-west-2.pooler.supabase.com:5432
+```
+
+📚 **For troubleshooting deployment issues, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)**
+
+---
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Database**: Supabase (PostgreSQL)
+- **ORM**: Prisma
+- **Authentication**: Clerk
+- **Deployment**: Vercel (Serverless)
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 
 ## Getting Started
 
@@ -27,6 +87,7 @@ DormChef uses **Inter** and **Poppins** fonts, stored locally in the repository 
 ### Font Files
 
 Font files are located in:
+
 - `public/fonts/inter/` - Inter Regular, Medium, SemiBold, Bold (weights 400-700)
 - `public/fonts/poppins/` - Poppins Regular, Medium, SemiBold, Bold (weights 400-700)
 
@@ -35,6 +96,7 @@ All fonts are in `.woff2` format for optimal web performance.
 ### Why Local Fonts?
 
 The application was configured to use local fonts instead of `next/font/google` to:
+
 1. Eliminate dependency on `fonts.googleapis.com` during builds
 2. Ensure fonts load reliably in restricted network environments
 3. Improve build performance by avoiding external font downloads
@@ -53,9 +115,37 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+⚠️ **IMPORTANT**: Before deploying, read the [Critical Deployment Requirements](#️-critical-vercel-deployment-requirements) section above.
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Required Environment Variables:
+
+```bash
+DATABASE_URL=postgresql://postgres.pluoonxoshbzwpbyhpib:[PASSWORD]@aws-0-us-west-2.pooler.supabase.com:6543/postgres?pgbouncer=true
+SUPABASE_URL=https://pluoonxoshbzwpbyhpib.supabase.co
+SUPABASE_SERVICE_ROLE=[Your service role key]
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=[Your publishable key]
+CLERK_SECRET_KEY=[Your secret key]
+```
+
+### Health Check Endpoint:
+
+Monitor your deployment at: `https://your-domain.vercel.app/api/health`
+
+A healthy response will show:
+
+```json
+{
+  "status": "healthy",
+  "database": "connected",
+  "userCount": 0
+}
+```
+
+If you see errors, consult [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
+
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 ---
 
@@ -121,6 +211,7 @@ netlify dev
 ```
 
 This will:
+
 - Start Quarto preview on port 4444
 - Make serverless functions available at `/api/*`
 - Load environment variables from `.env`
@@ -155,6 +246,7 @@ Access the import page at `http://localhost:8888/recipes.html`
 Preview a recipe without saving.
 
 **Response**:
+
 ```json
 {
   "recipe": {
@@ -173,6 +265,7 @@ Preview a recipe without saving.
 Import and save a recipe to Supabase.
 
 **Response**:
+
 ```json
 {
   "recipe": {...},
@@ -183,6 +276,7 @@ Import and save a recipe to Supabase.
 ### Database Schema
 
 **recipes** table:
+
 - `id` (uuid, primary key)
 - `source_url` (text, required)
 - `canonical_url` (text, nullable)
@@ -195,6 +289,7 @@ Import and save a recipe to Supabase.
 - `created_at`, `updated_at` (timestamps)
 
 **recipe_ingredients** table:
+
 - `id` (uuid, primary key)
 - `recipe_id` (uuid, foreign key)
 - `raw` (text, original ingredient string)
@@ -243,6 +338,7 @@ curl -X POST "http://localhost:8888/api/import-recipe?url=https://example.com/re
 ### Supported Sites
 
 Works with any site using Schema.org structured data, including:
+
 - AllRecipes
 - Food Network
 - NYT Cooking
@@ -253,14 +349,17 @@ Works with any site using Schema.org structured data, including:
 ### Troubleshooting
 
 **"Could not extract valid recipe data"**
+
 - Check if the URL is a recipe page (not a list or blog post)
 - Some sites may require JavaScript rendering (not supported in v1)
 
 **"Failed to fetch the URL"**
+
 - Site may be blocking requests or down
 - Check network connectivity
 
 **Duplicate recipes**
+
 - Recipes are deduplicated by `canonical_url` or `source_url`
 - Re-importing updates the existing record
 
